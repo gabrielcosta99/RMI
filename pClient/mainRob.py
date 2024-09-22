@@ -77,7 +77,9 @@ class MyRob(CRobLinkAngs):
         # elif   (self.measures.irSensor[center_id] > 4.0 and self.measures.irSensor[right_id]>2.0) or self.measures.irSensor[right_id]>6:
         #     print('Rotate left')
         #     self.driveMotors(-0.1,+0.1)
-        if self.measures.irSensor[center_id] > 2.0 and (self.measures.irSensor[right_id]<2.7 and self.measures.irSensor[left_id]>2.0):
+        if self.measures.irSensor[center_id] > 2.0 \
+            and ((self.measures.irSensor[right_id]<2.7 and self.measures.irSensor[left_id]>2.0)\
+            or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
             print('Rotate right')
             self.driveMotors(0.1,-0.1)
         elif   self.measures.irSensor[center_id] > 2.0 \
