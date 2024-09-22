@@ -1,2 +1,17 @@
 on page 5, the text file with the map created has an "I" in the middle of the file (line 14 and columnn 27 if im not
 mistaken)
+
+jClient -> folder for the java agent
+pClient -> folder for the python agent
+provSample -> folder for c agent
+
+
+to start the first simulation, execute the script "./startC1" and to to start the program go to pCLient (for example) and 
+execute mainRob.py
+
+a bussola devolve um valor me relação ao norte virtual em graus
+
+o robo está centrado no meio e nós temos de ver a distancia a que esta das paredes da esquerda e da direita para ajustar a 
+trajetoria. 
+Ou seja, temos a roda direita a mover-se na mesma velocidade da roda esquerda ( motors(v,v) ) e se virmos que o robo se esta
+a aproximar de uma das paredes temos de fazer motors(v+deltaV, v-deltaV)
