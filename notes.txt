@@ -15,3 +15,9 @@ o robo está centrado no meio e nós temos de ver a distancia a que esta das par
 trajetoria. 
 Ou seja, temos a roda direita a mover-se na mesma velocidade da roda esquerda ( motors(v,v) ) e se virmos que o robo se esta
 a aproximar de uma das paredes temos de fazer motors(v+deltaV, v-deltaV)
+
+
+
+no repositorio do ciberRatoTools, na branch linef, tens na pasta robsample os ficheiros que precisas: controller.c e controller.h (mainRob.c para alterar a velocidade)
+
+podemos manter um historico das ultimas 3 mediçoes
