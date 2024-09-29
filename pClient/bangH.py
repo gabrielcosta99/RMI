@@ -68,8 +68,12 @@ class MyRob(CRobLinkAngs):
         left_id = 1
         right_id = 2
         back_id = 3
-        Kp = 0.03
-        e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
+
+        Kp=0.04
+        deltah=0.1
+        bangvalue = 0.5
+        e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])*Kp
+
         print("center: ",self.measures.irSensor[center_id])
         print("left: ",self.measures.irSensor[left_id])
         print("right: ",self.measures.irSensor[right_id])
@@ -94,14 +98,28 @@ class MyRob(CRobLinkAngs):
             self.driveMotors(-0.15,+0.15)
         elif self.measures.irSensor[left_id]> 2.5 :
             print('Rotate slowly right')
-            deltav = e*Kp
-            print("deltav: ",deltav)
-            self.driveMotors(0.1+deltav,0.1-deltav)
+            if(e>0.5*deltah):
+                u = bangvalue
+            elif (e<-0.5*deltah):
+                u = -bangvalue
+            else:
+                # If error within histeresis limits, keep the value 
+                u = e
+            
+            print("u: ",u)
+            self.driveMotors(0.1+u,0.1-u)
         elif (self.measures.irSensor[right_id]> 2.5 ) :
             print('Rotate slowly left')
-            deltav = e*Kp
-            print("deltav: ",deltav)
-            self.driveMotors(0.1+deltav,0.1-deltav)
+            if(e>0.5*deltah):
+                u = bangvalue
+            elif (e<-0.5*deltah):
+                u = -bangvalue
+            else:
+                # If error within histeresis limits, keep the value 
+                u = e
+            
+            print("u: ",u)
+            self.driveMotors(0.1+u,0.1-u)
         else:
             print('Go')
             self.driveMotors(0.15,0.15)

@@ -68,20 +68,32 @@ class MyRob(CRobLinkAngs):
         left_id = 1
         right_id = 2
         back_id = 3
-        Kp = 0.03
+
+
+        Kp = 0.02      
+        Ti = 3.402823466e38
+        h = 1.5
+        u_m1 = 0
+        e_m1 = 0
+        e_m2 = 0
+        max_u = 0.05
+
+        Td = 0*h     # Td - differential time
+        K0 = Kp*(1+h/Ti+Td/h)
+        K1 = -Kp*(1+2*Td/h)
+        K2 = Kp*Td/h
+        e = self.measures.irSensor[left_id]-self.measures.irSensor[right_id]
+        u = u_m1 + K0*e + K1*e_m1 + K2*e_m2
+        
+       
+
+        # store values for next iterations 
+        
         e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
         print("center: ",self.measures.irSensor[center_id])
         print("left: ",self.measures.irSensor[left_id])
         print("right: ",self.measures.irSensor[right_id])
         print("back: ",self.measures.irSensor[back_id])
-        # this 5.0 is equivalent to 0.2 units
-        # if (self.measures.irSensor[center_id] < 4.0 and self.measures.irSensor[center_id] > 1.0 and self.measures.irSensor[left_id]>2.0) or (self.measures.irSensor[left_id]>6 and self.measures.irSensor[left_id]>0.6):
-        #    #or self.measures.irSensor[back_id] < 5.0 and self.measures.irSensor[left_id]>7 and self.measures.irSensor[left_id] < 10:
-        #     print('Rotate right')
-        #     self.driveMotors(0.1,-0.1)
-        # elif   (self.measures.irSensor[center_id] > 4.0 and self.measures.irSensor[right_id]>2.0) or self.measures.irSensor[right_id]>6:
-        #     print('Rotate left')
-        #     self.driveMotors(-0.1,+0.1)
         if self.measures.irSensor[center_id] > 1.7 \
             and ((self.measures.irSensor[right_id]<2.7 and self.measures.irSensor[left_id]>2.0)\
             or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
@@ -94,37 +106,38 @@ class MyRob(CRobLinkAngs):
             self.driveMotors(-0.15,+0.15)
         elif self.measures.irSensor[left_id]> 2.5 :
             print('Rotate slowly right')
-            deltav = e*Kp
-            print("deltav: ",deltav)
-            self.driveMotors(0.1+deltav,0.1-deltav)
+            e_m2 = e_m1
+            e_m1 = e
+            u_m1 = u
+
+            #Clip the control signal to avoid saturation
+            if(u > max_u):
+                u = max_u
+            
+            if (u < -max_u):
+                u = -max_u
+            print("u: ",u)
+        
+            self.driveMotors(0.1+u,0.1-u)
         elif (self.measures.irSensor[right_id]> 2.5 ) :
             print('Rotate slowly left')
-            deltav = e*Kp
-            print("deltav: ",deltav)
-            self.driveMotors(0.1+deltav,0.1-deltav)
+            e_m2 = e_m1
+            e_m1 = e
+            u_m1 = u
+
+            #Clip the control signal to avoid saturation
+            if(u > max_u):
+                u = max_u
+            
+            if (u < -max_u):
+                u = -max_u
+            print("u: ",u)
+            self.driveMotors(0.1+u,0.1-u)
         else:
             print('Go')
             self.driveMotors(0.15,0.15)
         print()
-        # if    self.measures.irSensor[center_id] > 5.0\
-        #    or self.measures.irSensor[back_id] > 5.0\
-        #    or self.measures.irSensor[left_id]   > 5.0:
-        #     print('Rotate right')
-        #     self.driveMotors(0.1,-0.1)
-        # elif    self.measures.irSensor[center_id] > 5.0\
-        #    or self.measures.irSensor[back_id] > 5.0\
-        #    or self.measures.irSensor[right_id]  > 5.0:
-        #     print('Rotate left')
-        #     self.driveMotors(-0.1,+0.1)
-        # elif self.measures.irSensor[left_id]> 2.7:
-        #     print('Rotate slowly right')
-        #     self.driveMotors(0.1,0.0)
-        # elif self.measures.irSensor[right_id]> 2.7:
-        #     print('Rotate slowly left')
-        #     self.driveMotors(0.0,0.1)
-        # else:
-        #     print('Go')
-        #     self.driveMotors(0.1,0.1)
+        
 
 class Map():
     def __init__(self, filename):
