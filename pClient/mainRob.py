@@ -7,6 +7,8 @@ import xml.etree.ElementTree as ET
 CELLROWS=7
 CELLCOLS=14
 
+rotation = 0
+
 class MyRob(CRobLinkAngs):
     def __init__(self, rob_name, rob_id, angles, host):
         CRobLinkAngs.__init__(self, rob_name, rob_id, angles, host)
@@ -64,6 +66,7 @@ class MyRob(CRobLinkAngs):
             
 
     def wander(self):
+        global rotation
         center_id = 0
         left_id = 1
         right_id = 2
@@ -87,24 +90,30 @@ class MyRob(CRobLinkAngs):
             or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
             print('Rotate riiiiiiiiiiight')
             self.driveMotors(0.15,-0.15)
+            rotation += -0.3
         elif   self.measures.irSensor[center_id] > 1.7 \
             and ((self.measures.irSensor[left_id]<2.7 and self.measures.irSensor[right_id]>2.0)\
             or self.measures.irSensor[left_id]<self.measures.irSensor[right_id]):
             print('Rotate leeeeeeeeeeft')
             self.driveMotors(-0.15,+0.15)
+            rotation += 0.3
         elif self.measures.irSensor[left_id]> 2.5 :
             print('Rotate slowly right')
-            deltav = e*Kp
+            deltav = e * Kp
             print("deltav: ",deltav)
             self.driveMotors(0.1+deltav,0.1-deltav)
+            rotation += -2*deltav
         elif (self.measures.irSensor[right_id]> 2.5 ) :
             print('Rotate slowly left')
-            deltav = e*Kp
+            deltav = e * Kp
             print("deltav: ",deltav)
             self.driveMotors(0.1+deltav,0.1-deltav)
+            rotation += -2*deltav
         else:
             print('Go')
             self.driveMotors(0.15,0.15)
+        rotation %= 2*pi
+        print("rotation: ",rotation)
         print()
         # if    self.measures.irSensor[center_id] > 5.0\
         #    or self.measures.irSensor[back_id] > 5.0\
