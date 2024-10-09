@@ -7,6 +7,17 @@ import xml.etree.ElementTree as ET
 CELLROWS=7
 CELLCOLS=14
 
+# class Controller():
+#     def __init__(self):
+#         self.u_m1 = 0
+#         self.e_m1 = 0
+#         self.e_m2 = 0
+    
+u_m1 = 0
+e_m1 = 0
+e_m2 = 0
+
+
 class MyRob(CRobLinkAngs):
     def __init__(self, rob_name, rob_id, angles, host):
         CRobLinkAngs.__init__(self, rob_name, rob_id, angles, host)
@@ -64,32 +75,29 @@ class MyRob(CRobLinkAngs):
             
 
     def wander(self):
+        global e_m1 
+        global e_m2
+        global u_m1 
+        
         center_id = 0
         left_id = 1
         right_id = 2
         back_id = 3
 
 
-        Kp = 0.02      
-        Ti = 3.402823466e38
+        Kp = 0.025    
         h = 1.5
-        u_m1 = 0
-        e_m1 = 0
-        e_m2 = 0
+        
+        u=0
         max_u = 0.05
 
         Td = 0*h     # Td - differential time
-        K0 = Kp*(1+h/Ti+Td/h)
+        K0 = Kp*(1+Td/h)
         K1 = -Kp*(1+2*Td/h)
         K2 = Kp*Td/h
         e = self.measures.irSensor[left_id]-self.measures.irSensor[right_id]
         u = u_m1 + K0*e + K1*e_m1 + K2*e_m2
         
-       
-
-        # store values for next iterations 
-        
-        e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
         print("center: ",self.measures.irSensor[center_id])
         print("left: ",self.measures.irSensor[left_id])
         print("right: ",self.measures.irSensor[right_id])
@@ -192,3 +200,5 @@ if __name__ == '__main__':
         rob.printMap()
     
     rob.run()
+
+
