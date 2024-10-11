@@ -68,7 +68,7 @@ class MyRob(CRobLinkAngs):
         left_id = 1
         right_id = 2
         back_id = 3
-        Kp = 0.03
+        Kp = 0.025
         e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
         print("center: ",self.measures.irSensor[center_id])
         print("left: ",self.measures.irSensor[left_id])
@@ -94,14 +94,14 @@ class MyRob(CRobLinkAngs):
             self.driveMotors(-0.15,+0.15)
         elif self.measures.irSensor[left_id]> 2.5 :
             print('Rotate slowly right')
-            deltav = e*Kp/2
+            deltav = e*Kp
             print("deltav: ",deltav)
-            self.driveMotors(0.12+deltav,0.12-deltav)
+            self.driveMotors(0.1+deltav,0.1-deltav)
         elif (self.measures.irSensor[right_id]> 2.5 ) :
             print('Rotate slowly left')
             deltav = e*Kp
             print("deltav: ",deltav)
-            self.driveMotors(0.12+deltav,0.12-deltav)
+            self.driveMotors(0.1+deltav,0.1-deltav)
         else:
             print('Go')
             self.driveMotors(0.15,0.15)
