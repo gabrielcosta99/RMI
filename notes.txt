@@ -21,3 +21,9 @@ a aproximar de uma das paredes temos de fazer motors(v+deltaV, v-deltaV)
 no repositorio do ciberRatoTools, na branch linef, tens na pasta robsample os ficheiros que precisas: controller.c e controller.h (mainRob.c para alterar a velocidade)
 
 podemos manter um historico das ultimas 3 mediçoes
+
+
+C2
+
+array[27] de strings[55] com 0s
+" " para linhas verticais 
