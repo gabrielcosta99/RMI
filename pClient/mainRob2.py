@@ -6,10 +6,15 @@ import xml.etree.ElementTree as ET
 
 CELLROWS=7
 CELLCOLS=14
-drawnMap = ['0'*55,
-           '0 '*28]* 27
-initialX, initialY = 0.0, 0.0
-
+drawnMap = [['0', ' '] * 28 for _ in range(27)]  # Correct initialization
+for i in range(0,27,2):
+    drawnMap[i] = ['0'] * 55
+drawnMap[14][28] = 'I'
+initialX, initialY = 14.0, 28.0
+posX, posY = 14.0, 28.0
+mapFile = open("outMap.txt", "w")
+mapFile.write("")
+mapFile.close()
 
 class MyRob(CRobLinkAngs):
     def __init__(self, rob_name, rob_id, angles, host):
@@ -34,8 +39,8 @@ class MyRob(CRobLinkAngs):
         stopped_state = 'run'
 
         self.readSensors()
-        initialX = self.measures.x
-        initialY = self.measures.y
+        initialX = self.measures.x - 14.0
+        initialY = self.measures.y - 28.0
         while True:
             self.readSensors()
             # if initialX == 0.0:
@@ -72,7 +77,7 @@ class MyRob(CRobLinkAngs):
                 if self.measures.returningLed==True:
                     self.setReturningLed(False)
                 self.wander()
-            
+
 
     def wander(self):
         center_id = 0
@@ -81,30 +86,28 @@ class MyRob(CRobLinkAngs):
         back_id = 3
         Kp = 0.03
         e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
+        posX = self.measures.x - initialX
+        posY = self.measures.x - initialX
         print("center: ",self.measures.irSensor[center_id])
         print("left: ",self.measures.irSensor[left_id])
         print("right: ",self.measures.irSensor[right_id])
         print("back: ",self.measures.irSensor[back_id])
-        print(self.measures.x)
-        print(self.measures.y)
-        print(self.measures.x - initialX)
-        print(self.measures.y - initialY)
+        print(posX)
+        print(posY)
         self.measures.compass
-    
-        self.measures.y
-        # this 5.0 is equivalent to 0.2 units
-        # if (self.measures.irSensor[center_id] < 4.0 and self.measures.irSensor[center_id] > 1.0 and self.measures.irSensor[left_id]>2.0) or (self.measures.irSensor[left_id]>6 and self.measures.irSensor[left_id]>0.6):
-        #    #or self.measures.irSensor[back_id] < 5.0 and self.measures.irSensor[left_id]>7 and self.measures.irSensor[left_id] < 10:
-        #     print('Rotate right')
-        #     self.driveMotors(0.1,-0.1)
-        # elif   (self.measures.irSensor[center_id] > 4.0 and self.measures.irSensor[right_id]>2.0) or self.measures.irSensor[right_id]>6:
-        #     print('Rotate left')
-        #     self.driveMotors(-0.1,+0.1)
-        if self.measures.irSensor[center_id] > 1.7 \
-            and ((self.measures.irSensor[right_id]<2.7 and self.measures.irSensor[left_id]>2.0)\
-            or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
+
+        if drawnMap[int(posX)][int(posY)] == '0':
+            drawnMap[int(posX)][int(posY)] = 'X'
+            print(drawnMap[int(posX)][int(posY)])
+        
+        if self.measures.irSensor[right_id] < 1.6:
             print('Rotate riiiiiiiiiiight')
             self.driveMotors(0.15,-0.15)
+        elif   self.measures.irSensor[center_id] > 1.7 \
+            and ((self.measures.irSensor[right_id]<2.7 and self.measures.irSensor[left_id]>2.0)\
+            or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
+            print('Rotate riiiiiiiiiight')
+            self.driveMotors(-0.15,+0.15)
         elif   self.measures.irSensor[center_id] > 1.7 \
             and ((self.measures.irSensor[left_id]<2.7 and self.measures.irSensor[right_id]>2.0)\
             or self.measures.irSensor[left_id]<self.measures.irSensor[right_id]):
@@ -124,16 +127,23 @@ class MyRob(CRobLinkAngs):
             print('Go')
             self.driveMotors(0.15,0.15)
         print()
-        
+
     def printDrawnMap(self):
         for i in drawnMap:
-            print(i[:55].replace("0"," "))
+            print("".join(i[:55]).replace('0',' '))
+    
+    def writeDrawnMap(self):
+        mapOut = open("outMap.txt", "a")
+        for i in drawnMap:
+            map.write("".join(i[:55]).replace('0',' '))
+        mapOut.close()
+        
 
 class Map():
     def __init__(self, filename):
         tree = ET.parse(filename)
         root = tree.getroot()
-        
+
         self.labMap = [[' '] * (CELLCOLS*2-1) for i in range(CELLROWS*2-1) ]
         i=1
         for child in root.iter('Row'):
@@ -153,7 +163,7 @@ class Map():
                            self.labMap[row][c//3*2]='-'
                        else:
                            None
-               
+
            i=i+1
 
 
@@ -176,12 +186,10 @@ for i in range(1, len(sys.argv),2):
         quit()
 
 if __name__ == '__main__':
-    for i in drawnMap:
-        print(i[:55].replace("0"," "))
     rob=MyRob(rob_name,pos,[0.0,60.0,-60.0,180.0],host)
     rob.printDrawnMap()
     if mapc != None:
         rob.setMap(mapc.labMap)
         rob.printMap()
-    
+
     rob.run()

@@ -25,5 +25,5 @@ podemos manter um historico das ultimas 3 mediçoes
 
 C2
 
-array[27] de strings[55] com 0s
-" " para linhas verticais 
+array[27][55] de strings
+encostar a parede direita se na 1ª volta, a esquerda na segunda
