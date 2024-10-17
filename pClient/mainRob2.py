@@ -9,9 +9,9 @@ CELLCOLS=14
 drawnMap = [['0', ' '] * 28 for _ in range(27)]  # Correct initialization
 for i in range(0,27,2):
     drawnMap[i] = ['0'] * 55
-drawnMap[14][28] = 'I'
-initialX, initialY = 14.0, 28.0
-posX, posY = 14.0, 28.0
+drawnMap[13][27] = 'I'
+initialX, initialY = 13.0, 27.0
+posX, posY = 13.0, 27.0
 mapFile = open("outMap.txt", "w")
 mapFile.write("")
 mapFile.close()
@@ -39,13 +39,10 @@ class MyRob(CRobLinkAngs):
         stopped_state = 'run'
 
         self.readSensors()
-        initialX = self.measures.x - 14.0
-        initialY = self.measures.y - 28.0
+        initialX = self.measures.x - 27.0
+        initialY = self.measures.y - 13.0
         while True:
             self.readSensors()
-            # if initialX == 0.0:
-            #     initialX = self.measures.x
-            #     initialY = self.measures.y
 
             if self.measures.endLed:
                 print(self.robName + " exiting")
@@ -87,20 +84,20 @@ class MyRob(CRobLinkAngs):
         Kp = 0.03
         e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
         posX = self.measures.x - initialX
-        posY = self.measures.x - initialX
+        posY = self.measures.y - initialY
         print("center: ",self.measures.irSensor[center_id])
         print("left: ",self.measures.irSensor[left_id])
         print("right: ",self.measures.irSensor[right_id])
         print("back: ",self.measures.irSensor[back_id])
-        print(posX)
-        print(posY)
-        self.measures.compass
+        print(int(posX))
+        print(int(posY))
+        print(self.measures.compass)
 
-        if drawnMap[int(posX)][int(posY)] == '0':
-            drawnMap[int(posX)][int(posY)] = 'X'
-            print(drawnMap[int(posX)][int(posY)])
+        if drawnMap[int(posY)][int(posX)] == '0':
+            drawnMap[int(posY)][int(posX)] = 'X'
+            print(drawnMap[int(posY)][int(posX)])
         
-        if self.measures.irSensor[right_id] < 1.6:
+        if self.measures.irSensor[right_id] < 1.8:
             print('Rotate riiiiiiiiiiight')
             self.driveMotors(0.15,-0.15)
         elif   self.measures.irSensor[center_id] > 1.7 \
