@@ -82,53 +82,97 @@ class MyRob(CRobLinkAngs):
         e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
         posX = self.measures.x - initialX
         posY = self.measures.y - initialY
+        mapX = int(posX + 0.5)
+        mapY = int( 26 - posY + 0.5)
+        rotation = self.measures.compass
         # print("center: ",self.measures.irSensor[center_id])
         # print("left: ",self.measures.irSensor[left_id])
         # print("right: ",self.measures.irSensor[right_id])
         # print("back: ",self.measures.irSensor[back_id])
-        print(int(posX))
-        print(int(posY))
-        print(self.measures.compass)
+        print(mapX)
+        print(mapY)
+        print(rotation)
         # self.printDrawnMap()
 
 
-        if drawnMap[26 - int(posY+0.5)][int(posX+0.5)] == '0' and (int(posY) % 2 == 1 or int(posX) % 2 == 1):
-            drawnMap[26 - int(posY+0.5)][int(posX+0.5)] = 'X'
-            # print(drawnMap[int(posY)][int(posX)])
+        if drawnMap[mapY][mapX] == '0' and (mapY % 2 == 1 or mapX % 2 == 1):
+            drawnMap[mapY][mapX] = 'X'
+            # print(drawnMap[mapY][mapX])
             
 # Wall draw
 
-        # if self
+        if abs(rotation) <=60:
+            if posX % 2 == 1:
+                if self.measures.irSensor[right_id] < 2.0:
+                    drawnMap[mapY+1][mapX] = '-'
+                else:
+                    drawnMap[mapY+1][mapX] = 'X'
+                    
+                if self.measures.irSensor[center_id] < 2.0:
+                    drawnMap[mapY][mapX+1] = '|'
+                else:
+                    drawnMap[mapY][mapX+1] = 'X'
+                    
+                if self.measures.irSensor[left_id] < 2.0:
+                    drawnMap[mapY-1][mapX] = '-'
+                else:
+                    drawnMap[mapY-1][mapX] = 'X'
+                    
+        elif abs(rotation) >= 120:
+            if posX % 2 == 1:
+                if self.measures.irSensor[right_id] < 2.0:
+                    drawnMap[mapY-1][mapX] = '-'
+                else:
+                    drawnMap[mapY-1][mapX] = 'X'
+                    
+                if self.measures.irSensor[center_id] < 2.0:
+                    drawnMap[mapY][mapX-1] = '|'
+                else:
+                    drawnMap[mapY][mapX-1] = 'X'
+                    
+                if self.measures.irSensor[left_id] < 2.0:
+                    drawnMap[mapY+1][mapX] = '-'
+                else:
+                    drawnMap[mapY+1][mapX] = 'X'
+                    
+        elif rotation > 0:
+            if posY % 2 == 1:
+                if self.measures.irSensor[right_id] < 2.0:
+                    drawnMap[mapY][mapX+1] = '|'
+                else:
+                    drawnMap[mapY][mapX+1] = 'X'
+                    
+                if self.measures.irSensor[center_id] < 2.0:
+                    drawnMap[mapY-1][mapX] = '-'
+                else:
+                    drawnMap[mapY-1][mapX] = 'X'
+                    
+                if self.measures.irSensor[left_id] < 2.0:
+                    drawnMap[mapY][mapX-1] = '|'
+                else:
+                    drawnMap[mapY][mapX-1] = 'X'
+                    
+        elif rotation < 0:
+            if posY % 2 == 1:
+                if self.measures.irSensor[right_id] < 2.0:
+                    drawnMap[mapY][mapX-1] = '|'
+                else:
+                    drawnMap[mapY][mapX-1] = 'X'
+                    
+                if self.measures.irSensor[center_id] < 2.0:
+                    drawnMap[mapY+1][mapX] = '-'
+                else:
+                    drawnMap[mapY+1][mapX] = 'X'
+                    
+                if self.measures.irSensor[left_id] < 2.0:
+                    drawnMap[mapY][mapX+1] = '|'
+                else:
+                    drawnMap[mapY][mapX+1] = 'X'
             
             
 # Movement decision
-        
-        # if self.measures.irSensor[right_id] < 1.8:
-        #     print('Rotate riiiiiiiiiiight')
-        #     self.driveMotors(0.15,-0.10)
-        # elif   self.measures.irSensor[center_id] > 1.7 \
-        #     and ((self.measures.irSensor[right_id]<2.7 and self.measures.irSensor[left_id]>2.0)\
-        #     or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
-        #     print('Rotate riiiiiiiiiight')
-        #     self.driveMotors(-0.15,+0.15)
-        # elif   self.measures.irSensor[center_id] > 1.7 \
-        #     and ((self.measures.irSensor[left_id]<2.7 and self.measures.irSensor[right_id]>2.0)\
-        #     or self.measures.irSensor[left_id]<self.measures.irSensor[right_id]):
-        #     print('Rotate leeeeeeeeeeft')
-        #     self.driveMotors(-0.15,+0.15)
-        # elif self.measures.irSensor[left_id]> 2.5 :
-        #     print('Rotate slowly right')
-        #     deltav = e*Kp/2
-        #     print("deltav: ",deltav)
-        #     self.driveMotors(0.12+deltav,0.12-deltav)
-        # elif (self.measures.irSensor[right_id]> 2.5 ) :
-        #     print('Rotate slowly left')
-        #     deltav = e*Kp
-        #     print("deltav: ",deltav)
-        #     self.driveMotors(0.12+deltav,0.12-deltav)
-        # else:
-        #     print('Go')
-        #     self.driveMotors(0.15,0.15)
+
+    
         print()
 
     def printDrawnMap(self):
