@@ -130,13 +130,13 @@ class MyRob(CRobLinkAngs):
             if abs(compass) < 60.0 or abs(compass) > 120.0:
                 movingHorizontaly = True
             if movingHorizontaly:
-                if (round(posX))%2==0:   # We are not at the center of the cell, keep moving forward
+                if (round(posX))%2==0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
                     print("Keep going forward")
                     self.driveMotors(0.15,0.15)
                 else:   # We are at the center of the cell, we may go to the right
                     if self.measures.irSensor[right_id] < 1.0\
-                        and ((abs(compass) < 60 and drawnMap[26 - int(posY+0.5)+2][int(posX+0.5)] == '0') \
-                        or (abs(compass)>120 and drawnMap[26 - int(posY+0.5-2)][int(posX+0.5)] == '0')):
+                        and ((abs(compass) < 60 and drawnMap[26 - (int(posY+0.5-1))][int(posX+0.5)] == '0') \
+                        or (abs(compass)>120 and drawnMap[26 - (int(posY+0.5+1))][int(posX+0.5)] == '0')):
                         print('Rotate riiiiiiiiiiight')
                         self.driveMotors(0.15,0.15)
                         toRotate = -pi/2
@@ -166,13 +166,13 @@ class MyRob(CRobLinkAngs):
                         print("Go")
                         self.driveMotors(0.15,0.15)
             else:
-                if (round(posY))%2 == 0:
+                if (round(posY))%2 == 0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:
                     print("Keep going forward")
                     self.driveMotors(0.15,0.15)
                 else:
                     if self.measures.irSensor[right_id] < 1.0 \
-                        and ((compass > 0 and drawnMap[26 - int(posY+0.5)][int(posX+0.5)+2] == '0') \
-                        or (compass<0 and drawnMap[26 - int(posY+0.5)][int(posX+0.5)-2] == '0')):
+                        and ((compass > 0 and drawnMap[26 -( int(posY+0.5))][int(posX+0.5)+2] == '0') \
+                        or (compass<0 and drawnMap[26 - (int(posY+0.5))][int(posX+0.5)-2] == '0')):
                         print('Rotate riiiiiiiiiiight')
                         self.driveMotors(0.15,0.15)
                         toRotate = -pi/2
