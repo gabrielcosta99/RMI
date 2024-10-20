@@ -82,7 +82,7 @@ class MyRob(CRobLinkAngs):
         left_id = 1
         right_id = 2
         back_id = 3
-        Kp = 0.03
+        Kp = 0.05
         e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
         posX = self.measures.x - initialX
         posY = self.measures.y - initialY
@@ -148,20 +148,27 @@ class MyRob(CRobLinkAngs):
                         and ((self.measures.irSensor[right_id]<2.0 and self.measures.irSensor[left_id]>1.5)\
                         or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
                         print('Dodge riiiiiiiiiiight')
-                        self.driveMotors(0.1,-0.1)
+                        self.driveMotors(0.15,0.15)
+                        toRotate = -pi/2
                     elif self.measures.irSensor[center_id] > 1.7 \
                         and ((self.measures.irSensor[left_id]<2.0 and self.measures.irSensor[right_id]>1.5)\
                         or self.measures.irSensor[left_id]<self.measures.irSensor[right_id]):
                         print('Dodge leeeeft')
-                        self.driveMotors(-0.1,0.1)
+                        self.driveMotors(0.15,0.15)
+                        toRotate = pi/2
                     elif (compass>2 and compass <58) or (compass>-180 and compass<-122):
                         print("Rotate slightly right")
-                        u = (abs(compass)/60)*Kp
+                        u = (abs(compass)%60/60)*Kp
+                        print("u: ",u)
                         self.driveMotors(0.1+u,0.1-u)
                     elif (compass<178 and compass >122) or (compass>-58 and compass<-2):
                         print("Rotate slightly left")
-                        u = (abs(compass)/60)*Kp
+                        u = (abs(compass)%60/60)*Kp
+                        print("u: ",u)
                         self.driveMotors(0.1-u,0.1+u)
+                    elif self.measures.irSensor[right_id]>5.0 or self.measures.irSensor[left_id]>5.0:
+                        print("Rotate slightly: ",e)
+                        self.driveMotors(0.1+e,0.1-e)
                     else:
                         print("Go")
                         self.driveMotors(0.15,0.15)
@@ -184,20 +191,27 @@ class MyRob(CRobLinkAngs):
                         and ((self.measures.irSensor[right_id]<2.0 and self.measures.irSensor[left_id]>1.5)\
                         or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
                         print('Dodge riiiiiiiiiiight')
-                        self.driveMotors(0.1,-0.1)
+                        self.driveMotors(0.15,0.15)
+                        toRotate = -pi/2
                     elif self.measures.irSensor[center_id] > 1.7 \
                         and ((self.measures.irSensor[left_id]<2.0 and self.measures.irSensor[right_id]>1.5)\
                         or self.measures.irSensor[left_id]<self.measures.irSensor[right_id]):
                         print('Dodge leeeeeft')
-                        self.driveMotors(-0.1,0.1)
+                        self.driveMotors(0.15,0.15)
+                        toRotate = pi/2
                     elif (compass>92 and compass <118) or (compass>-88 and compass<-62):
                         print("Rotate slightly right")
-                        u = (abs(compass)/60)*Kp
+                        u = (abs(compass)%90/90)*Kp
+                        print("u: ",u)
                         self.driveMotors(0.1+u,0.1-u)
                     elif (compass<88 and compass >62) or (compass>-118 and compass<-92):
                         print("Rotate slightly left")
-                        u = (abs(compass)/60)*Kp
+                        u = (abs(compass)%90/90)*Kp
+                        print("u: ",u)
                         self.driveMotors(0.1-u,0.1+u)
+                    elif self.measures.irSensor[right_id]>5.0 or self.measures.irSensor[left_id]>5.0:
+                        print("Rotate slightly: ",e)
+                        self.driveMotors(0.1+e,0.1-e)
                     else:
                         print("Go")
                         self.driveMotors(0.15,0.15)
