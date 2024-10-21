@@ -82,10 +82,11 @@ class MyRob(CRobLinkAngs):
         left_id = 1
         right_id = 2
         back_id = 3
-        Kp = 0.05
+        Kp = 0.1
         e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
         posX = self.measures.x - initialX
         posY = self.measures.y - initialY
+        # self.printDrawnMap()
         print("center: ",self.measures.irSensor[center_id])
         print("left: ",self.measures.irSensor[left_id])
         print("right: ",self.measures.irSensor[right_id])
@@ -93,7 +94,7 @@ class MyRob(CRobLinkAngs):
         print("posX: ",posX)
         print("posY: ",posY)
         print("compass: ",self.measures.compass)
-        # self.printDrawnMap()
+        
 
 
         if drawnMap[26 - int(posY+0.5)][int(posX+0.5)] == '0' and (int(posY) % 2 == 1 or int(posX) % 2 == 1):
@@ -140,8 +141,14 @@ class MyRob(CRobLinkAngs):
                         print('Rotate riiiiiiiiiiight')
                         self.driveMotors(0.15,0.15)
                         toRotate = -pi/2
-                    elif self.measures.irSensor[left_id] <1.0 and self.measures.irSensor[center_id] >1.5:
+                    # if there is an open space to the left that we havent visited and we have already visited the front cell, turn left
+                    elif self.measures.irSensor[left_id] <1.0 \
+                        and (((abs(compass) < 60 and drawnMap[26 - (int(posY+0.5))][int(posX+0.5)+1] != '0') \
+                        and (abs(compass) < 60 and drawnMap[26 - (int(posY+0.5-1))][int(posX+0.5)] == '0')) \
+                        or ((abs(compass) > 120 and drawnMap[26 - (int(posY+0.5))][int(posX+0.5)-1] != '0' ) \
+                        and (abs(compass)>120 and drawnMap[26 - (int(posY+0.5+1))][int(posX+0.5)] == '0'))):
                         print('Rotate leeeeeft')
+                        print(drawnMap[26 - (int(posY+0.5))][int(posX+0.5)+1]) if abs(compass) < 60 else print(drawnMap[26 - (int(posY+0.5))][int(posX+0.5)-1])
                         self.driveMotors(0.15,0.15)
                         toRotate = pi/2
                     elif self.measures.irSensor[center_id] > 1.7 \
@@ -178,13 +185,18 @@ class MyRob(CRobLinkAngs):
                     self.driveMotors(0.15,0.15)
                 else:
                     if self.measures.irSensor[right_id] < 1.0 \
-                        and ((compass > 0 and drawnMap[26 -( int(posY+0.5))][int(posX+0.5)+2] == '0') \
-                        or (compass<0 and drawnMap[26 - (int(posY+0.5))][int(posX+0.5)-2] == '0')):
+                        and ((compass > 0 and drawnMap[26 -( int(posY+0.5))][int(posX+0.5)+1] == '0') \
+                        or (compass<0 and drawnMap[26 - (int(posY+0.5))][int(posX+0.5)-1] == '0')):
                         print('Rotate riiiiiiiiiiight')
                         self.driveMotors(0.15,0.15)
                         toRotate = -pi/2
-                    elif self.measures.irSensor[left_id] <1.0 and self.measures.irSensor[center_id]>1.5:
+                    elif self.measures.irSensor[left_id] <1.0\
+                        and (((compass > 0 and drawnMap[26 -( int(posY+0.5)+1)][int(posX+0.5)] != '0') \
+                        and (compass > 0 and drawnMap[26 -( int(posY+0.5))][int(posX+0.5)-1] == '0')) \
+                        or ((compass < 0 and drawnMap[26 -( int(posY+0.5)-1)][int(posX+0.5)] != '0') \
+                        and (compass < 0 and drawnMap[26 - (int(posY+0.5))][int(posX+0.5)+1] == '0'))):
                         print('Rotate leeeeeft')
+                        print(drawnMap[26 -( int(posY+0.5)+1)][int(posX+0.5)]) if compass >0 else print(drawnMap[26 -( int(posY+0.5)-1)][int(posX+0.5)])
                         self.driveMotors(0.15,0.15)
                         toRotate = pi/2
                     elif self.measures.irSensor[center_id] > 1.7 \
