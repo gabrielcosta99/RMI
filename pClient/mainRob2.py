@@ -103,68 +103,68 @@ class MyRob(CRobLinkAngs):
 
         if abs(rotation) <=60:
             if posX % 2 == 1:
-                if self.measures.irSensor[right_id] < 2.0:
+                if self.measures.irSensor[right_id] > 2.0:
                     drawnMap[mapY+1][mapX] = '-'
                 else:
                     drawnMap[mapY+1][mapX] = 'X'
                     
-                if self.measures.irSensor[center_id] < 2.0:
+                if self.measures.irSensor[center_id] > 2.0:
                     drawnMap[mapY][mapX+1] = '|'
                 else:
                     drawnMap[mapY][mapX+1] = 'X'
                     
-                if self.measures.irSensor[left_id] < 2.0:
+                if self.measures.irSensor[left_id] > 2.0:
                     drawnMap[mapY-1][mapX] = '-'
                 else:
                     drawnMap[mapY-1][mapX] = 'X'
                     
         elif abs(rotation) >= 120:
             if posX % 2 == 1:
-                if self.measures.irSensor[right_id] < 2.0:
+                if self.measures.irSensor[right_id] > 2.0:
                     drawnMap[mapY-1][mapX] = '-'
                 else:
                     drawnMap[mapY-1][mapX] = 'X'
                     
-                if self.measures.irSensor[center_id] < 2.0:
+                if self.measures.irSensor[center_id] > 2.0:
                     drawnMap[mapY][mapX-1] = '|'
                 else:
                     drawnMap[mapY][mapX-1] = 'X'
                     
-                if self.measures.irSensor[left_id] < 2.0:
+                if self.measures.irSensor[left_id] > 2.0:
                     drawnMap[mapY+1][mapX] = '-'
                 else:
                     drawnMap[mapY+1][mapX] = 'X'
                     
         elif rotation > 0:
             if posY % 2 == 1:
-                if self.measures.irSensor[right_id] < 2.0:
+                if self.measures.irSensor[right_id] > 2.0:
                     drawnMap[mapY][mapX+1] = '|'
                 else:
                     drawnMap[mapY][mapX+1] = 'X'
                     
-                if self.measures.irSensor[center_id] < 2.0:
+                if self.measures.irSensor[center_id] > 2.0:
                     drawnMap[mapY-1][mapX] = '-'
                 else:
                     drawnMap[mapY-1][mapX] = 'X'
                     
-                if self.measures.irSensor[left_id] < 2.0:
+                if self.measures.irSensor[left_id] > 2.0:
                     drawnMap[mapY][mapX-1] = '|'
                 else:
                     drawnMap[mapY][mapX-1] = 'X'
                     
         elif rotation < 0:
             if posY % 2 == 1:
-                if self.measures.irSensor[right_id] < 2.0:
+                if self.measures.irSensor[right_id] > 2.0:
                     drawnMap[mapY][mapX-1] = '|'
                 else:
                     drawnMap[mapY][mapX-1] = 'X'
                     
-                if self.measures.irSensor[center_id] < 2.0:
+                if self.measures.irSensor[center_id] > 2.0:
                     drawnMap[mapY+1][mapX] = '-'
                 else:
                     drawnMap[mapY+1][mapX] = 'X'
                     
-                if self.measures.irSensor[left_id] < 2.0:
+                if self.measures.irSensor[left_id] > 2.0:
                     drawnMap[mapY][mapX+1] = '|'
                 else:
                     drawnMap[mapY][mapX+1] = 'X'
