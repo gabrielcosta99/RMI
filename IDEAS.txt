@@ -1,0 +1,4 @@
+    Deixar o robo a dar "wander" e passado um bocado, como ja vamos ter os alguns espaços que ainda nao visitamos,
+fazemos um algoritmo tipo A* para visitar esses espaços.
+    Deixar como está e criar uma lista com as posições que ainda nao visitamos e criar um caminho para chegar lá.
+    
