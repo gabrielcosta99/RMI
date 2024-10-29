@@ -1,4 +1,24 @@
     Deixar o robo a dar "wander" e passado um bocado, como ja vamos ter os alguns espaços que ainda nao visitamos,
 fazemos um algoritmo tipo A* para visitar esses espaços.
     Deixar como está e criar uma lista com as posições que ainda nao visitamos e criar um caminho para chegar lá.
-    
+
+[] FAZER A CENA DE O GAJO IR PARA O CENTRO DA CELULA E SO DEPOIS VIRAR
+[] QUANDO ESTA A FAZER BACKTRACK, VAI PARA A CELULA MAIS PROXIMA QUE AINDA N VISITOU
+[] Tentar virar (á esquerda ou á direita) apenas quando estiver bem centrado
+[] O A* n está a calcular o caminho mais curto, apenas calcula um caminho
+
+ - - - - - - - - - - - - - -
+|XXXXXXX|XXXXXXXXX|XXXXXXXXX|
+ - - X - X - - - X X - X - X
+|XXIXXXXXX|XXXXX|X|XXXXXXXXX|
+ X - X X X X - - X - X - - X
+|XXX|XXXXXXX|XXX|XXX|XXX|XXX|
+ - X X - X - X X - X X X - X
+|X|XXXXX|XXX|X| |XXXXX|XXX|
+ - X - - - X X X - - X X - X
+|XXX|XXXXXXXXX|X|XXXXX|XXXXX|
+ X - X - - - X X X - - X - X
+|X| |X|XXXXXXX|XXX|XXXXXXXXX|
+ X - X X - - X - - X - - - X
+|XXXXXXXXXXXXXXXXXXXXXXXXXXX|
+ - - - - - - - - - - - - - -
