@@ -90,8 +90,8 @@ class MyRob(CRobLinkAngs):
         # e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
         posX = self.measures.x - initialX
         posY = self.measures.y - initialY
-        mapX = int(posX + 0.5)
-        mapY = int( 26 - posY + 0.5)
+        mapX = round(posX)
+        mapY = round( 26 - posY)
         rotation = self.measures.compass
         # print("center: ",self.measures.irSensor[center_id])
         # print("left: ",self.measures.irSensor[left_id])
@@ -162,7 +162,7 @@ class MyRob(CRobLinkAngs):
                     
                 if self.measures.irSensor[left_id] > 1.5:
                     drawnMap[mapY][mapX+1] = '|'
-               
+
         # if drawnMap[mapY+1][mapX] == "0" and (mapX,mapY+1) not in positions_to_visit:
         #     pos = (mapX,mapY+1)
         #     positions_to_visit.append(pos)
@@ -221,11 +221,12 @@ class MyRob(CRobLinkAngs):
     def getClosestPosIdx(self,positions_to_visit,mapX,mapY):
         minDist = 1000
         closestIdx = 0
-        for i in range(len(positions_to_visit)-1):
+        for i in range(len(positions_to_visit)):
             pos = positions_to_visit[i]
             if drawnMap[pos[1]][pos[0]] != "0":
                 continue
             path = self.a_star(drawnMap,(mapX,mapY),pos)
+            # print("testing: ",pos," generated path: ",path)
             dist = len(path)
             if dist < minDist:
                 minDist = dist
@@ -252,6 +253,7 @@ class MyRob(CRobLinkAngs):
                 path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
                 print("path: ",path)
             except:
+                self.printDrawnMap()
                 self.finish()
                 return
             return
@@ -281,13 +283,13 @@ class MyRob(CRobLinkAngs):
                     self.driveMotors(0.15,0.15)
                     toRotate = pi/2
                     
-                elif (self.measures.compass>2 and self.measures.compass <58) or (self.measures.compass>-178 and self.measures.compass<-122):
+                elif (self.measures.compass>1 and self.measures.compass <59) or (self.measures.compass>-179 and self.measures.compass<-121):
                     print("Rotate slightly right")
                     if self.measures.compass > 0:
                         toRotate = (0-self.measures.compass)*pi/180
                     else:
                         toRotate = (-180-self.measures.compass)*pi/180
-                elif (self.measures.compass<178 and self.measures.compass >122) or (self.measures.compass>-58 and self.measures.compass<-2):
+                elif (self.measures.compass<179 and self.measures.compass >121) or (self.measures.compass>-59 and self.measures.compass<-1):
                     print("Rotate slightly left")
                     if self.measures.compass > 0:
                         toRotate = (180 - self.measures.compass)*pi/180
@@ -307,7 +309,8 @@ class MyRob(CRobLinkAngs):
                         path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
                         print("path: ",path)
                     except:
-                        self.finish()
+                        self.printDrawnMap()
+                        self.finish()                       
                         return
                 else:
                     print("Go")
@@ -344,13 +347,13 @@ class MyRob(CRobLinkAngs):
                     if drawnMap[mapY-1][mapX] == "0" and (mapX,mapY-1) not in positions_to_visit:
                         pos = (mapX,mapY-1)
                         positions_to_visit.append(pos)
-                elif (self.measures.compass>92 and self.measures.compass <118) or (self.measures.compass>-88 and self.measures.compass<-62):
+                elif (self.measures.compass>91 and self.measures.compass <119) or (self.measures.compass>-89 and self.measures.compass<-61):
                     print("Rotate slightly right")
                     if self.measures.compass > 0:
                         toRotate = (90-self.measures.compass)*pi/180
                     else:
                         toRotate = (-90-self.measures.compass)*pi/180
-                elif (self.measures.compass<88 and self.measures.compass >62) or (self.measures.compass>-118 and self.measures.compass<-92):
+                elif (self.measures.compass<89 and self.measures.compass >61) or (self.measures.compass>-119 and self.measures.compass<-91):
                     print("Rotate slightly left")
                     if self.measures.compass > 0:
                         toRotate = (90-self.measures.compass)*pi/180
@@ -370,6 +373,7 @@ class MyRob(CRobLinkAngs):
                         path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
                         print("path: ",path)
                     except:
+                        self.printDrawnMap()
                         self.finish()
                         return
                 else:
@@ -406,7 +410,7 @@ class MyRob(CRobLinkAngs):
                 neighbor = (current[0] + direction[0], current[1] + direction[1])
 
                 # Check bounds and that neighbor is walkable
-                if grid[neighbor[1]][neighbor[0]] == 'X' or grid[neighbor[1]][neighbor[0]] == 'I':\
+                if grid[neighbor[1]][neighbor[0]] == 'X' or grid[neighbor[1]][neighbor[0]] == 'I':
                 #and 0 <= neighbor[0] < len(grid) and 0 <= neighbor[1] < len(grid[0])  :
                     new_cost = cost_so_far[current] + 1  # Each step costs 1
 
