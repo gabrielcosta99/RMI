@@ -141,77 +141,65 @@ class MyRob(CRobLinkAngs):
                 
     # Wall draw
 
-        if abs(rotation) <=2:
-            if mapX % 2 == 1:
-                
-                if self.measures.irSensor[right_id] > 1.5:
-                    # drawnMap[mapY+1][mapX] = '-'
-                    self.addToMap(mapY+1,mapX,'-')
+            if abs(rotation) <=2:
+                if mapX % 2 == 1:
                     
-                if self.measures.irSensor[center_id] > 1.5:
-                    # drawnMap[mapY][mapX+1] = '|'
-                    self.addToMap(mapY,mapX+1,'|')
+                    if self.measures.irSensor[right_id] > 1.5:
+                        # drawnMap[mapY+1][mapX] = '-'
+                        self.addToMap(mapY+1,mapX,'-')
+                        
+                    if self.measures.irSensor[center_id] > 1.5:
+                        # drawnMap[mapY][mapX+1] = '|'
+                        self.addToMap(mapY,mapX+1,'|')
+                        
+                    if self.measures.irSensor[left_id] > 1.5:
+                        # drawnMap[mapY-1][mapX] = '-'
+                        self.addToMap(mapY-1,mapX,'-')
+                        
+            elif abs(rotation) >= 178:
+                if mapX % 2 == 1:
                     
-                if self.measures.irSensor[left_id] > 1.5:
-                    # drawnMap[mapY-1][mapX] = '-'
-                    self.addToMap(mapY-1,mapX,'-')
-                    
-        elif abs(rotation) >= 178:
-            if mapX % 2 == 1:
-                
 
-                if self.measures.irSensor[right_id] > 1.5:
-                    # drawnMap[mapY-1][mapX] = '-'
-                    self.addToMap(mapY-1,mapX,'-')
-                    
-                if self.measures.irSensor[center_id] > 1.5:
-                    # drawnMap[mapY][mapX-1] = '|'
-                    self.addToMap(mapY,mapX-1,'|')
-                    
-                if self.measures.irSensor[left_id] > 1.5:
-                    # drawnMap[mapY+1][mapX] = '-'
-                    self.addToMap(mapY+1,mapX,'-')
-                    
-        elif rotation > 88 and rotation<92:
-            if mapY % 2 == 1:
-                if self.measures.irSensor[right_id] > 1.5:
-                    # drawnMap[mapY][mapX+1] = '|'
-                    self.addToMap(mapY,mapX+1,'|')
-                    
-                if self.measures.irSensor[center_id] > 1.5:
-                    # drawnMap[mapY-1][mapX] = '-'
-                    self.addToMap(mapY-1,mapX,'-')
-                    
-                if self.measures.irSensor[left_id] > 1.5:
-                    # drawnMap[mapY][mapX-1] = '|'
-                    self.addToMap(mapY,mapX-1,'|')
-                    
-        elif rotation > -92 and rotation < -88:
-            if mapY % 2 == 1:
-                if self.measures.irSensor[right_id] > 1.5:
-                    # drawnMap[mapY][mapX-1] = '|'
-                    self.addToMap(mapY,mapX-1,'|')
-                    
-                if self.measures.irSensor[center_id] > 1.5:
-                    # drawnMap[mapY+1][mapX] = '-'
-                    self.addToMap(mapY+1,mapX,'-')
-                    
-                if self.measures.irSensor[left_id] > 1.5:
-                    # drawnMap[mapY][mapX+1] = '|'
-                    self.addToMap(mapY,mapX+1,'|')
+                    if self.measures.irSensor[right_id] > 1.5:
+                        # drawnMap[mapY-1][mapX] = '-'
+                        self.addToMap(mapY-1,mapX,'-')
+                        
+                    if self.measures.irSensor[center_id] > 1.5:
+                        # drawnMap[mapY][mapX-1] = '|'
+                        self.addToMap(mapY,mapX-1,'|')
+                        
+                    if self.measures.irSensor[left_id] > 1.5:
+                        # drawnMap[mapY+1][mapX] = '-'
+                        self.addToMap(mapY+1,mapX,'-')
+                        
+            elif rotation > 88 and rotation<92:
+                if mapY % 2 == 1:
+                    if self.measures.irSensor[right_id] > 1.5:
+                        # drawnMap[mapY][mapX+1] = '|'
+                        self.addToMap(mapY,mapX+1,'|')
+                        
+                    if self.measures.irSensor[center_id] > 1.5:
+                        # drawnMap[mapY-1][mapX] = '-'
+                        self.addToMap(mapY-1,mapX,'-')
+                        
+                    if self.measures.irSensor[left_id] > 1.5:
+                        # drawnMap[mapY][mapX-1] = '|'
+                        self.addToMap(mapY,mapX-1,'|')
+                        
+            elif rotation > -92 and rotation < -88:
+                if mapY % 2 == 1:
+                    if self.measures.irSensor[right_id] > 1.5:
+                        # drawnMap[mapY][mapX-1] = '|'
+                        self.addToMap(mapY,mapX-1,'|')
+                        
+                    if self.measures.irSensor[center_id] > 1.5:
+                        # drawnMap[mapY+1][mapX] = '-'
+                        self.addToMap(mapY+1,mapX,'-')
+                        
+                    if self.measures.irSensor[left_id] > 1.5:
+                        # drawnMap[mapY][mapX+1] = '|'
+                        self.addToMap(mapY,mapX+1,'|')
 
-            # if drawnMap[mapY+1][mapX] == "0" and (mapX,mapY+1) not in positions_to_visit:
-            #     pos = (mapX,mapY+1)
-            #     positions_to_visit.append(pos)
-            # if drawnMap[mapY-1][mapX] == "0" and (mapX,mapY-1) not in positions_to_visit:
-            #     pos = (mapX,mapY-1)
-            #     positions_to_visit.append(pos)
-            # if drawnMap[mapY][mapX+1] == "0" and (mapX+1,mapY) not in positions_to_visit:
-            #     pos = (mapX+1,mapY)
-            #     positions_to_visit.append(pos)
-            # if drawnMap[mapY][mapX-1] == "0" and (mapX-1,mapY) not in positions_to_visit:
-            #     pos = (mapX-1,mapY)
-            #     positions_to_visit.append(pos)
             if drawnMap[mapY][mapX+1] == "0" and (mapX+1,mapY) not in positions_to_visit:
                 pos = (mapX+1,mapY)
                 positions_to_visit.append(pos)
