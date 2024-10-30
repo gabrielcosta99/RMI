@@ -116,7 +116,7 @@ class MyRob(CRobLinkAngs):
             
 # Wall draw
 
-        if abs(rotation) <=10:
+        if abs(rotation) <=2:
             if mapX % 2 == 1:
                 
                 if self.measures.irSensor[right_id] > 1.5:
@@ -128,7 +128,7 @@ class MyRob(CRobLinkAngs):
                 if self.measures.irSensor[left_id] > 1.5:
                     drawnMap[mapY-1][mapX] = '-'
                     
-        elif abs(rotation) >= 170:
+        elif abs(rotation) >= 178:
             if mapX % 2 == 1:
                 
 
@@ -141,7 +141,7 @@ class MyRob(CRobLinkAngs):
                 if self.measures.irSensor[left_id] > 1.5:
                     drawnMap[mapY+1][mapX] = '-'
                     
-        elif rotation > 80 and rotation<100:
+        elif rotation > 88 and rotation<92:
             if mapY % 2 == 1:
                 if self.measures.irSensor[right_id] > 1.5:
                     drawnMap[mapY][mapX+1] = '|'
@@ -152,7 +152,7 @@ class MyRob(CRobLinkAngs):
                 if self.measures.irSensor[left_id] > 1.5:
                     drawnMap[mapY][mapX-1] = '|'
                     
-        elif rotation > -100 and rotation < -80:
+        elif rotation > -92 and rotation < -88:
             if mapY % 2 == 1:
                 if self.measures.irSensor[right_id] > 1.5:
                     drawnMap[mapY][mapX-1] = '|'
@@ -261,124 +261,128 @@ class MyRob(CRobLinkAngs):
         if abs(self.measures.compass) < 60.0 or abs(self.measures.compass) > 120.0:
             movingHorizontaly = True
         if movingHorizontaly:
-            if (mapX)%2==0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
-                print("Keep going forward")
-                self.driveMotors(0.1,0.1)
-            else:   # We are at the center of the cell, we may go to the right
-                
-                if self.measures.irSensor[right_id] < 1.2\
-                and ((abs(self.measures.compass) < 60 and drawnMap[mapY+1][mapX] == '0') \
-                or (abs(self.measures.compass)>120 and drawnMap[mapY-1][mapX] == '0')):
+            # if (mapX)%2==0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
+            #     print("Keep going forward")
+            #     self.driveMotors(0.1,0.1)
+            # else:   # We are at the center of the cell, we may go to the right
+            
+            if self.measures.irSensor[right_id] < 1.2\
+            and ((abs(self.measures.compass) < 60 and drawnMap[mapY+1][mapX] == '0') \
+            or (abs(self.measures.compass)>120 and drawnMap[mapY-1][mapX] == '0')):
+                if (mapX)%2==0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
+                    print("Keep going forward")
+                    self.driveMotors(0.1,0.1)
+                else:
                     print('Rotate riiiiiiiiiiight')
                     self.driveMotors(0.15,0.15)
                     toRotate = -pi/2
-                # if there is an open space to the left that we havent visited and we have already visited the front cell, turn left
-                elif self.measures.irSensor[left_id] <1.0 \
-                    and (((abs(self.measures.compass) < 60 and drawnMap[mapY][mapX+1] != '0') \
-                    and (abs(self.measures.compass) < 60 and drawnMap[mapY-1][mapX] == '0')) \
-                    or ((abs(self.measures.compass) > 120 and drawnMap[mapY][mapX-1] != '0' ) \
-                    and (abs(self.measures.compass)>120 and drawnMap[mapY+1][mapX] == '0'))):
+            # if there is an open space to the left that we havent visited and we have already visited the front cell, turn left
+            elif self.measures.irSensor[left_id] <1.0 \
+                and (((abs(self.measures.compass) < 60 and drawnMap[mapY][mapX+1] != '0') \
+                and (abs(self.measures.compass) < 60 and drawnMap[mapY-1][mapX] == '0')) \
+                or ((abs(self.measures.compass) > 120 and drawnMap[mapY][mapX-1] != '0' ) \
+                and (abs(self.measures.compass)>120 and drawnMap[mapY+1][mapX] == '0'))):
+                if (mapX)%2==0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
+                    print("Keep going forward")
+                    self.driveMotors(0.1,0.1)
+                else:
                     print('Rotate leeeeeft')
                     # print(drawnMap[mapY][mapX+1]) if abs(self.measures.compass) < 60 else print(drawnMap[26 - (int(posY+0.5))][int(posX+0.5)-1])
                     self.driveMotors(0.15,0.15)
                     toRotate = pi/2
-                    
-                elif (self.measures.compass>1 and self.measures.compass <59) or (self.measures.compass>-179 and self.measures.compass<-121):
-                    print("Rotate slightly right")
-                    if self.measures.compass > 0:
-                        toRotate = (0-self.measures.compass)*pi/180
-                    else:
-                        toRotate = (-180-self.measures.compass)*pi/180
-                elif (self.measures.compass<179 and self.measures.compass >121) or (self.measures.compass>-59 and self.measures.compass<-1):
-                    print("Rotate slightly left")
-                    if self.measures.compass > 0:
-                        toRotate = (180 - self.measures.compass)*pi/180
-                    else:
-                        toRotate = (0 - self.measures.compass)* pi/180
-                elif self.measures.irSensor[center_id] > 1.7 and self.measures.irSensor[left_id] >1.3 and self.measures.irSensor[right_id]>1.3:
-                    print('------> TURN AROUND <-------- ')
-                    self.driveMotors(0.0,0.0)
-                    toRotate = pi
-                    search = True
-                    try:
-                        pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                        while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
-                            pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                            print("checking: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
-                        print("pos_to_reach: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
-                        path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
-                        print("path: ",path)
-                    except:
-                        self.printDrawnMap()
-                        self.finish()                       
-                        return
+                
+            elif (self.measures.compass>1 and self.measures.compass <59) or (self.measures.compass>-179 and self.measures.compass<-121):
+                print("Rotate slightly right")
+                if self.measures.compass > 0:
+                    toRotate = (0-self.measures.compass)*pi/180
                 else:
-                    print("Go")
-                    self.driveMotors(0.15,0.15)
-        else:
-            if (mapY)%2 == 0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:
-                print("Keep going forward")
-                self.driveMotors(0.1,0.1)
+                    toRotate = (-180-self.measures.compass)*pi/180
+            elif (self.measures.compass<179 and self.measures.compass >121) or (self.measures.compass>-59 and self.measures.compass<-1):
+                print("Rotate slightly left")
+                if self.measures.compass > 0:
+                    toRotate = (180 - self.measures.compass)*pi/180
+                else:
+                    toRotate = (0 - self.measures.compass)* pi/180
+            elif self.measures.irSensor[center_id] > 1.7 and self.measures.irSensor[left_id] >1.3 and self.measures.irSensor[right_id]>1.3:
+                print('------> TURN AROUND <-------- ')
+                self.driveMotors(0.0,0.0)
+                toRotate = pi
+                search = True
+                try:
+                    pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                    while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
+                        pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                        print("checking: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
+                    print("pos_to_reach: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
+                    path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
+                    print("path: ",path)
+                except:
+                    self.printDrawnMap()
+                    self.finish()                       
+                    return
             else:
-                if self.measures.irSensor[right_id] < 1.2 \
-                and ((self.measures.compass > 0 and drawnMap[mapY][mapX+1] == '0') \
-                or (self.measures.compass<0 and drawnMap[mapY][mapX-1] == '0')):
+                print("Go")
+                self.driveMotors(0.15,0.15)
+        else:
+            # if (mapY)%2 == 0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:
+            #     print("Keep going forward")
+            #     self.driveMotors(0.1,0.1)
+            # else:
+            if self.measures.irSensor[right_id] < 1.2 \
+            and ((self.measures.compass > 0 and drawnMap[mapY][mapX+1] == '0') \
+            or (self.measures.compass<0 and drawnMap[mapY][mapX-1] == '0')):
+                if (mapY)%2 == 0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:
+                    print("Keep going forward")
+                    self.driveMotors(0.1,0.1)
+                else:
                     print('Rotate riiiiiiiiiiight')
                     self.driveMotors(0.15,0.15)
                     toRotate = -pi/2
-                elif self.measures.irSensor[left_id] <1.0\
-                and (((self.measures.compass > 0 and drawnMap[mapY-1][mapX] != '0') \
-                and (self.measures.compass > 0 and drawnMap[mapY][mapX-1] == '0')) \
-                or ((self.measures.compass < 0 and drawnMap[mapY+1][mapX] != '0') \
-                and (self.measures.compass < 0 and drawnMap[mapY][mapX+1] == '0'))):
+            elif self.measures.irSensor[left_id] <1.0\
+            and (((self.measures.compass > 0 and drawnMap[mapY-1][mapX] != '0') \
+            and (self.measures.compass > 0 and drawnMap[mapY][mapX-1] == '0')) \
+            or ((self.measures.compass < 0 and drawnMap[mapY+1][mapX] != '0') \
+            and (self.measures.compass < 0 and drawnMap[mapY][mapX+1] == '0'))):
+                if (mapY)%2 == 0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:
+                    print("Keep going forward")
+                    self.driveMotors(0.1,0.1)
+                else:
                     print('Rotate leeeeeft')
                     # print(drawnMap[26 -( int(posY+0.5)+2)][int(posX+0.5)]) if self.measures.compass >0 else print(drawnMap[26 -( int(posY+0.5)-2)][int(posX+0.5)])
                     self.driveMotors(0.15,0.15)
                     toRotate = pi/2
-                    if drawnMap[mapY][mapX+1] == "0" and (mapX+1,mapY) not in positions_to_visit:
-                        pos = (mapX+1,mapY)
-                        positions_to_visit.append(pos)
-                    if drawnMap[mapY][mapX-1] == "0" and (mapX-1,mapY) not in positions_to_visit:
-                        pos = (mapX-1,mapY)
-                        positions_to_visit.append(pos)
-                    if drawnMap[mapY+1][mapX] == "0" and (mapX,mapY+1) not in positions_to_visit:
-                        pos = (mapX,mapY+1)
-                        positions_to_visit.append(pos)
-                    if drawnMap[mapY-1][mapX] == "0" and (mapX,mapY-1) not in positions_to_visit:
-                        pos = (mapX,mapY-1)
-                        positions_to_visit.append(pos)
-                elif (self.measures.compass>91 and self.measures.compass <119) or (self.measures.compass>-89 and self.measures.compass<-61):
-                    print("Rotate slightly right")
-                    if self.measures.compass > 0:
-                        toRotate = (90-self.measures.compass)*pi/180
-                    else:
-                        toRotate = (-90-self.measures.compass)*pi/180
-                elif (self.measures.compass<89 and self.measures.compass >61) or (self.measures.compass>-119 and self.measures.compass<-91):
-                    print("Rotate slightly left")
-                    if self.measures.compass > 0:
-                        toRotate = (90-self.measures.compass)*pi/180
-                    else:
-                        toRotate = (-90-self.measures.compass)*pi/180
-                elif self.measures.irSensor[center_id] > 1.7 and self.measures.irSensor[left_id] >1.7 and self.measures.irSensor[right_id]>1.7:
-                    print('------> TURN AROUND <-------- ')
-                    self.driveMotors(0.15,0.15)
-                    toRotate = pi
-                    try:
-                        search = True
-                        pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                        while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
-                            pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                            print("checking: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
-                        print("pos_to_reach: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
-                        path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
-                        print("path: ",path)
-                    except:
-                        self.printDrawnMap()
-                        self.finish()
-                        return
+            elif (self.measures.compass>91 and self.measures.compass <119) or (self.measures.compass>-89 and self.measures.compass<-61):
+                print("Rotate slightly right")
+                if self.measures.compass > 0:
+                    toRotate = (90-self.measures.compass)*pi/180
                 else:
-                    print("Go")
-                    self.driveMotors(0.15,0.15)
+                    toRotate = (-90-self.measures.compass)*pi/180
+            elif (self.measures.compass<89 and self.measures.compass >61) or (self.measures.compass>-119 and self.measures.compass<-91):
+                print("Rotate slightly left")
+                if self.measures.compass > 0:
+                    toRotate = (90-self.measures.compass)*pi/180
+                else:
+                    toRotate = (-90-self.measures.compass)*pi/180
+            elif self.measures.irSensor[center_id] > 1.7 and self.measures.irSensor[left_id] >1.7 and self.measures.irSensor[right_id]>1.7:
+                print('------> TURN AROUND <-------- ')
+                self.driveMotors(0.15,0.15)
+                toRotate = pi
+                try:
+                    search = True
+                    pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                    while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
+                        pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                        print("checking: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
+                    print("pos_to_reach: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
+                    path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
+                    print("path: ",path)
+                except:
+                    self.printDrawnMap()
+                    self.finish()
+                    return
+            else:
+                print("Go")
+                self.driveMotors(0.15,0.15)
 
         print("movingHorizontaly: ",movingHorizontaly)
         
