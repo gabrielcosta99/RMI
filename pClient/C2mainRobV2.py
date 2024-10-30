@@ -32,6 +32,11 @@ class MyRob(CRobLinkAngs):
     def printMap(self):
         for l in reversed(self.labMap):
             print(''.join([str(l) for l in l]))
+            
+    def addToMap(self,x,y,char):
+        if (x % 2 == 1) or (y % 2 == 1):
+            drawnMap[x][y] = char
+        
 
     def run(self):
         global initialX, initialY
@@ -136,52 +141,64 @@ class MyRob(CRobLinkAngs):
                 
     # Wall draw
 
-            if abs(rotation) <=2:
-                if mapX % 2 == 1:
+        if abs(rotation) <=2:
+            if mapX % 2 == 1:
+                
+                if self.measures.irSensor[right_id] > 1.5:
+                    # drawnMap[mapY+1][mapX] = '-'
+                    self.addToMap(mapY+1,mapX,'-')
                     
-                    if self.measures.irSensor[right_id] > 1.5:
-                        drawnMap[mapY+1][mapX] = '-'
-                        
-                    if self.measures.irSensor[center_id] > 1.5:
-                        drawnMap[mapY][mapX+1] = '|'
-                        
-                    if self.measures.irSensor[left_id] > 1.5:
-                        drawnMap[mapY-1][mapX] = '-'
-                        
-            elif abs(rotation) >= 178:
-                if mapX % 2 == 1:
+                if self.measures.irSensor[center_id] > 1.5:
+                    # drawnMap[mapY][mapX+1] = '|'
+                    self.addToMap(mapY,mapX+1,'|')
                     
+                if self.measures.irSensor[left_id] > 1.5:
+                    # drawnMap[mapY-1][mapX] = '-'
+                    self.addToMap(mapY-1,mapX,'-')
+                    
+        elif abs(rotation) >= 178:
+            if mapX % 2 == 1:
+                
 
-                    if self.measures.irSensor[right_id] > 1.5:
-                        drawnMap[mapY-1][mapX] = '-'
-                        
-                    if self.measures.irSensor[center_id] > 1.5:
-                        drawnMap[mapY][mapX-1] = '|'
-                        
-                    if self.measures.irSensor[left_id] > 1.5:
-                        drawnMap[mapY+1][mapX] = '-'
-                        
-            elif rotation > 88 and rotation<92:
-                if mapY % 2 == 1:
-                    if self.measures.irSensor[right_id] > 1.5:
-                        drawnMap[mapY][mapX+1] = '|'
-                        
-                    if self.measures.irSensor[center_id] > 1.5:
-                        drawnMap[mapY-1][mapX] = '-'
-                        
-                    if self.measures.irSensor[left_id] > 1.5:
-                        drawnMap[mapY][mapX-1] = '|'
-                        
-            elif rotation > -92 and rotation < -88:
-                if mapY % 2 == 1:
-                    if self.measures.irSensor[right_id] > 1.5:
-                        drawnMap[mapY][mapX-1] = '|'
-                        
-                    if self.measures.irSensor[center_id] > 1.5:
-                        drawnMap[mapY+1][mapX] = '-'
-                        
-                    if self.measures.irSensor[left_id] > 1.5:
-                        drawnMap[mapY][mapX+1] = '|'
+                if self.measures.irSensor[right_id] > 1.5:
+                    # drawnMap[mapY-1][mapX] = '-'
+                    self.addToMap(mapY-1,mapX,'-')
+                    
+                if self.measures.irSensor[center_id] > 1.5:
+                    # drawnMap[mapY][mapX-1] = '|'
+                    self.addToMap(mapY,mapX-1,'|')
+                    
+                if self.measures.irSensor[left_id] > 1.5:
+                    # drawnMap[mapY+1][mapX] = '-'
+                    self.addToMap(mapY+1,mapX,'-')
+                    
+        elif rotation > 88 and rotation<92:
+            if mapY % 2 == 1:
+                if self.measures.irSensor[right_id] > 1.5:
+                    # drawnMap[mapY][mapX+1] = '|'
+                    self.addToMap(mapY,mapX+1,'|')
+                    
+                if self.measures.irSensor[center_id] > 1.5:
+                    # drawnMap[mapY-1][mapX] = '-'
+                    self.addToMap(mapY-1,mapX,'-')
+                    
+                if self.measures.irSensor[left_id] > 1.5:
+                    # drawnMap[mapY][mapX-1] = '|'
+                    self.addToMap(mapY,mapX-1,'|')
+                    
+        elif rotation > -92 and rotation < -88:
+            if mapY % 2 == 1:
+                if self.measures.irSensor[right_id] > 1.5:
+                    # drawnMap[mapY][mapX-1] = '|'
+                    self.addToMap(mapY,mapX-1,'|')
+                    
+                if self.measures.irSensor[center_id] > 1.5:
+                    # drawnMap[mapY+1][mapX] = '-'
+                    self.addToMap(mapY+1,mapX,'-')
+                    
+                if self.measures.irSensor[left_id] > 1.5:
+                    # drawnMap[mapY][mapX+1] = '|'
+                    self.addToMap(mapY,mapX+1,'|')
 
             # if drawnMap[mapY+1][mapX] == "0" and (mapX,mapY+1) not in positions_to_visit:
             #     pos = (mapX,mapY+1)
@@ -255,6 +272,7 @@ class MyRob(CRobLinkAngs):
                 print("path: ",path)
             except:
                 self.printDrawnMap()
+                self.writeDrawnMap()
                 self.finish()
                 return
             return
@@ -496,12 +514,13 @@ class MyRob(CRobLinkAngs):
             print("".join(i[:55]).replace('0',' '))
     
     def writeDrawnMap(self):
-        mapFile = open("outMap.map", "w")
+        mapFile = open("outMap.out", "w")
         mapFile.write("")
         mapFile.close()
-        mapOut = open("outMap.map", "a")
+        mapOut = open("outMap.out", "a")
         for i in drawnMap:
-            map.write("".join(i[:55]).replace('0',' '))
+            mapOut.write("".join(i[:55]).replace('0',' '))
+            mapOut.write('\n')
         mapOut.close()
         
 
