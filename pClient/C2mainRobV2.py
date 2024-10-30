@@ -271,6 +271,7 @@ class MyRob(CRobLinkAngs):
                 print("path: ",path)
             except:
                 self.printDrawnMap()
+                self.writeDrawnMap()
                 self.finish()
                 return
             return
@@ -512,12 +513,13 @@ class MyRob(CRobLinkAngs):
             print("".join(i[:55]).replace('0',' '))
     
     def writeDrawnMap(self):
-        mapFile = open("outMap.map", "w")
+        mapFile = open("outMap.out", "w")
         mapFile.write("")
         mapFile.close()
-        mapOut = open("outMap.map", "a")
+        mapOut = open("outMap.out", "a")
         for i in drawnMap:
-            map.write("".join(i[:55]).replace('0',' '))
+            mapOut.write("".join(i[:55]).replace('0',' '))
+            mapOut.write('\n')
         mapOut.close()
         
 
