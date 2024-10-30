@@ -110,87 +110,7 @@ class MyRob(CRobLinkAngs):
         print("compass: ",self.measures.compass)
         print("toRotate: ",toRotate)
 
-        if drawnMap[mapY][mapX] == '0' and (mapY % 2 == 1 or mapX % 2 == 1):
-            drawnMap[mapY][mapX] = 'X'
-            # print(drawnMap[mapY][mapX])
-            
-# Wall draw
-
-        if abs(rotation) <=2:
-            if mapX % 2 == 1:
-                
-                if self.measures.irSensor[right_id] > 1.5:
-                    drawnMap[mapY+1][mapX] = '-'
-                    
-                if self.measures.irSensor[center_id] > 1.5:
-                    drawnMap[mapY][mapX+1] = '|'
-                    
-                if self.measures.irSensor[left_id] > 1.5:
-                    drawnMap[mapY-1][mapX] = '-'
-                    
-        elif abs(rotation) >= 178:
-            if mapX % 2 == 1:
-                
-
-                if self.measures.irSensor[right_id] > 1.5:
-                    drawnMap[mapY-1][mapX] = '-'
-                    
-                if self.measures.irSensor[center_id] > 1.5:
-                    drawnMap[mapY][mapX-1] = '|'
-                    
-                if self.measures.irSensor[left_id] > 1.5:
-                    drawnMap[mapY+1][mapX] = '-'
-                    
-        elif rotation > 88 and rotation<92:
-            if mapY % 2 == 1:
-                if self.measures.irSensor[right_id] > 1.5:
-                    drawnMap[mapY][mapX+1] = '|'
-                    
-                if self.measures.irSensor[center_id] > 1.5:
-                    drawnMap[mapY-1][mapX] = '-'
-                    
-                if self.measures.irSensor[left_id] > 1.5:
-                    drawnMap[mapY][mapX-1] = '|'
-                    
-        elif rotation > -92 and rotation < -88:
-            if mapY % 2 == 1:
-                if self.measures.irSensor[right_id] > 1.5:
-                    drawnMap[mapY][mapX-1] = '|'
-                    
-                if self.measures.irSensor[center_id] > 1.5:
-                    drawnMap[mapY+1][mapX] = '-'
-                    
-                if self.measures.irSensor[left_id] > 1.5:
-                    drawnMap[mapY][mapX+1] = '|'
-
-        # if drawnMap[mapY+1][mapX] == "0" and (mapX,mapY+1) not in positions_to_visit:
-        #     pos = (mapX,mapY+1)
-        #     positions_to_visit.append(pos)
-        # if drawnMap[mapY-1][mapX] == "0" and (mapX,mapY-1) not in positions_to_visit:
-        #     pos = (mapX,mapY-1)
-        #     positions_to_visit.append(pos)
-        # if drawnMap[mapY][mapX+1] == "0" and (mapX+1,mapY) not in positions_to_visit:
-        #     pos = (mapX+1,mapY)
-        #     positions_to_visit.append(pos)
-        # if drawnMap[mapY][mapX-1] == "0" and (mapX-1,mapY) not in positions_to_visit:
-        #     pos = (mapX-1,mapY)
-        #     positions_to_visit.append(pos)
-        if drawnMap[mapY][mapX+1] == "0" and (mapX+1,mapY) not in positions_to_visit:
-            pos = (mapX+1,mapY)
-            positions_to_visit.append(pos)
-        if drawnMap[mapY][mapX-1] == "0" and (mapX-1,mapY) not in positions_to_visit:
-            pos = (mapX-1,mapY)
-            positions_to_visit.append(pos)
-        if drawnMap[mapY+1][mapX] == "0" and (mapX,mapY+1) not in positions_to_visit:
-            pos = (mapX,mapY+1)
-            positions_to_visit.append(pos)
-        if drawnMap[mapY-1][mapX] == "0" and (mapX,mapY-1) not in positions_to_visit:
-            pos = (mapX,mapY-1)
-            positions_to_visit.append(pos)
-
-        pos = (mapX,mapY)
-        if pos in positions_to_visit:
-            positions_to_visit.remove(pos)
+        
 
 # Movement decision
         if toRotate > 0:
@@ -210,6 +130,87 @@ class MyRob(CRobLinkAngs):
                 toRotate +=0.3
                 self.driveMotors(0.15,-0.15)
         else:
+            if drawnMap[mapY][mapX] == '0' and (mapY % 2 == 1 or mapX % 2 == 1):
+                drawnMap[mapY][mapX] = 'X'
+                # print(drawnMap[mapY][mapX])
+                
+    # Wall draw
+
+            if abs(rotation) <=2:
+                if mapX % 2 == 1:
+                    
+                    if self.measures.irSensor[right_id] > 1.5:
+                        drawnMap[mapY+1][mapX] = '-'
+                        
+                    if self.measures.irSensor[center_id] > 1.5:
+                        drawnMap[mapY][mapX+1] = '|'
+                        
+                    if self.measures.irSensor[left_id] > 1.5:
+                        drawnMap[mapY-1][mapX] = '-'
+                        
+            elif abs(rotation) >= 178:
+                if mapX % 2 == 1:
+                    
+
+                    if self.measures.irSensor[right_id] > 1.5:
+                        drawnMap[mapY-1][mapX] = '-'
+                        
+                    if self.measures.irSensor[center_id] > 1.5:
+                        drawnMap[mapY][mapX-1] = '|'
+                        
+                    if self.measures.irSensor[left_id] > 1.5:
+                        drawnMap[mapY+1][mapX] = '-'
+                        
+            elif rotation > 88 and rotation<92:
+                if mapY % 2 == 1:
+                    if self.measures.irSensor[right_id] > 1.5:
+                        drawnMap[mapY][mapX+1] = '|'
+                        
+                    if self.measures.irSensor[center_id] > 1.5:
+                        drawnMap[mapY-1][mapX] = '-'
+                        
+                    if self.measures.irSensor[left_id] > 1.5:
+                        drawnMap[mapY][mapX-1] = '|'
+                        
+            elif rotation > -92 and rotation < -88:
+                if mapY % 2 == 1:
+                    if self.measures.irSensor[right_id] > 1.5:
+                        drawnMap[mapY][mapX-1] = '|'
+                        
+                    if self.measures.irSensor[center_id] > 1.5:
+                        drawnMap[mapY+1][mapX] = '-'
+                        
+                    if self.measures.irSensor[left_id] > 1.5:
+                        drawnMap[mapY][mapX+1] = '|'
+
+            # if drawnMap[mapY+1][mapX] == "0" and (mapX,mapY+1) not in positions_to_visit:
+            #     pos = (mapX,mapY+1)
+            #     positions_to_visit.append(pos)
+            # if drawnMap[mapY-1][mapX] == "0" and (mapX,mapY-1) not in positions_to_visit:
+            #     pos = (mapX,mapY-1)
+            #     positions_to_visit.append(pos)
+            # if drawnMap[mapY][mapX+1] == "0" and (mapX+1,mapY) not in positions_to_visit:
+            #     pos = (mapX+1,mapY)
+            #     positions_to_visit.append(pos)
+            # if drawnMap[mapY][mapX-1] == "0" and (mapX-1,mapY) not in positions_to_visit:
+            #     pos = (mapX-1,mapY)
+            #     positions_to_visit.append(pos)
+            if drawnMap[mapY][mapX+1] == "0" and (mapX+1,mapY) not in positions_to_visit:
+                pos = (mapX+1,mapY)
+                positions_to_visit.append(pos)
+            if drawnMap[mapY][mapX-1] == "0" and (mapX-1,mapY) not in positions_to_visit:
+                pos = (mapX-1,mapY)
+                positions_to_visit.append(pos)
+            if drawnMap[mapY+1][mapX] == "0" and (mapX,mapY+1) not in positions_to_visit:
+                pos = (mapX,mapY+1)
+                positions_to_visit.append(pos)
+            if drawnMap[mapY-1][mapX] == "0" and (mapX,mapY-1) not in positions_to_visit:
+                pos = (mapX,mapY-1)
+                positions_to_visit.append(pos)
+
+            pos = (mapX,mapY)
+            if pos in positions_to_visit:
+                positions_to_visit.remove(pos)
             if search:
                 self.searchAlgorithm(mapX,mapY)
                 print(positions_to_visit)
