@@ -227,9 +227,11 @@ class MyRob(CRobLinkAngs):
     def getClosestPosIdx(self,positions_to_visit,mapX,mapY):
         minDist = 1000
         closestIdx = 0
-        for i in range(len(positions_to_visit)):
+        i = 0
+        while i < len(positions_to_visit):
             pos = positions_to_visit[i]
             if drawnMap[pos[1]][pos[0]] != "0":
+                positions_to_visit.pop(i)
                 continue
             path = self.a_star(drawnMap,(mapX,mapY),pos)
             # print("testing: ",pos," generated path: ",path)
@@ -237,6 +239,7 @@ class MyRob(CRobLinkAngs):
             if dist < minDist:
                 minDist = dist
                 closestIdx = i
+            i+=1
         return closestIdx
 
     def roam(self,mapX,mapY):
@@ -246,18 +249,21 @@ class MyRob(CRobLinkAngs):
         right_id = 2
         back_id = 3
         #check rotation first
-        movingHorizontaly = False
+        movingHorizontaly = abs(self.measures.compass) < 60.0 or abs(self.measures.compass) > 120.0
+        print("movingHorizontaly: ",movingHorizontaly)
+
         # compass = self.measures.compass
         if drawnMap[mapY][mapX+1] != "0" and drawnMap[mapY][mapX-1] != "0" and drawnMap[mapY+1][mapX] !="0" and drawnMap[mapY-1][mapX] != "0":
             search = True
             self.driveMotors(0.0,0.0)
             try:
                 pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
-                    pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                # while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
+                #     pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
                 print("pos_to_reach: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
                 path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
                 print("path: ",path)
+                self.writeDrawnMap()
             except:
                 self.printDrawnMap()
                 self.writeDrawnMap()
@@ -265,8 +271,6 @@ class MyRob(CRobLinkAngs):
                 return
             return
         
-        if abs(self.measures.compass) < 60.0 or abs(self.measures.compass) > 120.0:
-            movingHorizontaly = True
         if movingHorizontaly:
             # if (mapX)%2==0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
             #     print("Keep going forward")
@@ -317,12 +321,13 @@ class MyRob(CRobLinkAngs):
                 search = True
                 try:
                     pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                    while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
-                        pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                        print("checking: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
+                    # while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
+                    #     pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                    #     print("checking: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
                     print("pos_to_reach: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
                     path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
                     print("path: ",path)
+                    self.writeDrawnMap()
                 except:
                     self.printDrawnMap()
                     self.finish()                       
@@ -377,12 +382,13 @@ class MyRob(CRobLinkAngs):
                 try:
                     search = True
                     pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                    while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
-                        pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                        print("checking: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
+                    # while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
+                    #     pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                    #     print("checking: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
                     print("pos_to_reach: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
                     path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
                     print("path: ",path)
+                    self.writeDrawnMap()
                 except:
                     self.printDrawnMap()
                     self.finish()
@@ -391,7 +397,6 @@ class MyRob(CRobLinkAngs):
                 print("Go")
                 self.driveMotors(0.15,0.15)
 
-        print("movingHorizontaly: ",movingHorizontaly)
         
             
     def a_star(self,grid, start, goal): # returns a path from "start" to "goal" using A*
@@ -491,7 +496,6 @@ class MyRob(CRobLinkAngs):
                 else:
                     print("Go")
                     self.driveMotors(0.15,0.15)
-        print("movingHorizontaly: ",movingHorizontaly)
         
         print()
         return 
