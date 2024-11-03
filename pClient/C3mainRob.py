@@ -3,6 +3,7 @@ import sys
 from croblink import *
 from math import *
 import xml.etree.ElementTree as ET
+import heapq
 
 CELLROWS=7
 CELLCOLS=14
@@ -12,9 +13,16 @@ for i in range(1,27,2):
 drawnMap[13][27] = 'I'
 initialX, initialY = 13.0, 27.0
 posX, posY = 13.0, 27.0
-
+turning = (-1,-1)
 toRotate = 0
+positions_to_visit = []
+search = False
 e_m1, e_m2, u_m1 = 0,0,0
+path = []
+
+obj_pos = [(27,13),(0,0),(0,0)]
+prev_beacons = [300,200,200]
+detected = False
 
 class MyRob(CRobLinkAngs):
     def __init__(self, rob_name, rob_id, angles, host):
@@ -28,6 +36,11 @@ class MyRob(CRobLinkAngs):
     def printMap(self):
         for l in reversed(self.labMap):
             print(''.join([str(l) for l in l]))
+            
+    def addToMap(self,x,y,char):
+        if (x % 2 == 1) or (y % 2 == 1):
+            drawnMap[x][y] = char
+        
 
     def run(self):
         global initialX, initialY
@@ -74,350 +87,470 @@ class MyRob(CRobLinkAngs):
                 if self.measures.returningLed==True:
                     self.setReturningLed(False)
                 self.wander()
-            
-    def smart_wander(self):
-        print("Smart Wander")
 
 
     def wander(self):
-        global toRotate
+        global toRotate, turning, positions_to_visit,search, detected
         center_id = 0
         left_id = 1
         right_id = 2
         back_id = 3
-        Kp = 0.1
-        e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
+        # Kp = 0.015
+        # e = (self.measures.irSensor[left_id]-self.measures.irSensor[right_id])
         posX = self.measures.x - initialX
         posY = self.measures.y - initialY
-        mapX = int(posX + 0.5)
-        mapY = int( 26 - posY + 0.5)
+        mapX = round(posX)
+        mapY = round( 26 - posY)
         rotation = self.measures.compass
         # print("center: ",self.measures.irSensor[center_id])
         # print("left: ",self.measures.irSensor[left_id])
         # print("right: ",self.measures.irSensor[right_id])
         # print("back: ",self.measures.irSensor[back_id])
-        self.printDrawnMap()
-        print(mapX)
-        print(mapY)
-        print(rotation)
-        print("center: ",self.measures.irSensor[center_id])
-        print("left: ",self.measures.irSensor[left_id])
-        print("right: ",self.measures.irSensor[right_id])
-        print("back: ",self.measures.irSensor[back_id])
+        print("mapX:", mapX)
+        print("mapY: ",mapY)
+        print("rotation: ",rotation)
+        # print("center: ",self.measures.irSensor[center_id])
+        # print("left: ",self.measures.irSensor[left_id])
+        # print("right: ",self.measures.irSensor[right_id])
+        # print("back: ",self.measures.irSensor[back_id])
         print("posX: ",posX)
-        print("posY: ",posY)
+        print("posY (parsed): ",26 - posY)
         print("compass: ",self.measures.compass)
-        
+        print("toRotate: ",toRotate)
+        print("beacon:", self.measures.beacon)
+        print("objectives:", obj_pos)
 
         if drawnMap[mapY][mapX] == '0' and (mapY % 2 == 1 or mapX % 2 == 1):
             drawnMap[mapY][mapX] = 'X'
             # print(drawnMap[mapY][mapX])
             
-# Wall draw
+# Map draw -----------------------------------------------------------------------
+ 
+        if abs(rotation) <=2:
+            if mapX % 2 == 1:
+                
+                if self.measures.irSensor[right_id] > 1.5:
+                    # drawnMap[mapY+1][mapX] = '-'
+                    self.addToMap(mapY+1,mapX,'-')
+                    
+                if self.measures.irSensor[center_id] > 1.5:
+                    # drawnMap[mapY][mapX+1] = '|'
+                    self.addToMap(mapY,mapX+1,'|')
+                    
+                if self.measures.irSensor[left_id] > 1.5:
+                    # drawnMap[mapY-1][mapX] = '-'
+                    self.addToMap(mapY-1,mapX,'-')
+                    
+        elif abs(rotation) >= 178:
+            if mapX % 2 == 1:
+                
 
-        if abs(rotation) <=60:
-            if posX % 2 == 1:
                 if self.measures.irSensor[right_id] > 1.5:
-                    drawnMap[mapY+1][mapX] = '-'
-                else:
-                    drawnMap[mapY+1][mapX] = 'X'
+                    # drawnMap[mapY-1][mapX] = '-'
+                    self.addToMap(mapY-1,mapX,'-')
                     
                 if self.measures.irSensor[center_id] > 1.5:
-                    drawnMap[mapY][mapX+1] = '|'
-                else:
-                    drawnMap[mapY][mapX+1] = 'X'
+                    # drawnMap[mapY][mapX-1] = '|'
+                    self.addToMap(mapY,mapX-1,'|')
                     
                 if self.measures.irSensor[left_id] > 1.5:
-                    drawnMap[mapY-1][mapX] = '-'
-                else:
-                    drawnMap[mapY-1][mapX] = 'X'
+                    # drawnMap[mapY+1][mapX] = '-'
+                    self.addToMap(mapY+1,mapX,'-')
                     
-        elif abs(rotation) >= 120:
-            if posX % 2 == 1:
+        elif rotation > 88 and rotation<92:
+            if mapY % 2 == 1:
                 if self.measures.irSensor[right_id] > 1.5:
-                    drawnMap[mapY-1][mapX] = '-'
-                else:
-                    drawnMap[mapY-1][mapX] = 'X'
+                    # drawnMap[mapY][mapX+1] = '|'
+                    self.addToMap(mapY,mapX+1,'|')
                     
                 if self.measures.irSensor[center_id] > 1.5:
-                    drawnMap[mapY][mapX-1] = '|'
-                else:
-                    drawnMap[mapY][mapX-1] = 'X'
+                    # drawnMap[mapY-1][mapX] = '-'
+                    self.addToMap(mapY-1,mapX,'-')
                     
                 if self.measures.irSensor[left_id] > 1.5:
-                    drawnMap[mapY+1][mapX] = '-'
-                else:
-                    drawnMap[mapY+1][mapX] = 'X'
+                    # drawnMap[mapY][mapX-1] = '|'
+                    self.addToMap(mapY,mapX-1,'|')
                     
-        elif rotation > 0:
-            if posY % 2 == 1:
+        elif rotation > -92 and rotation < -88:
+            if mapY % 2 == 1:
                 if self.measures.irSensor[right_id] > 1.5:
-                    drawnMap[mapY][mapX+1] = '|'
-                else:
-                    drawnMap[mapY][mapX+1] = 'X'
+                    # drawnMap[mapY][mapX-1] = '|'
+                    self.addToMap(mapY,mapX-1,'|')
                     
                 if self.measures.irSensor[center_id] > 1.5:
-                    drawnMap[mapY-1][mapX] = '-'
-                else:
-                    drawnMap[mapY-1][mapX] = 'X'
+                    # drawnMap[mapY+1][mapX] = '-'
+                    self.addToMap(mapY+1,mapX,'-')
                     
                 if self.measures.irSensor[left_id] > 1.5:
-                    drawnMap[mapY][mapX-1] = '|'
-                else:
-                    drawnMap[mapY][mapX-1] = 'X'
-                    
-        elif rotation < 0:
-            if posY % 2 == 1:
-                if self.measures.irSensor[right_id] > 1.5:
-                    drawnMap[mapY][mapX-1] = '|'
-                else:
-                    drawnMap[mapY][mapX-1] = 'X'
-                    
-                if self.measures.irSensor[center_id] > 1.5:
-                    drawnMap[mapY+1][mapX] = '-'
-                else:
-                    drawnMap[mapY+1][mapX] = 'X'
-                    
-                if self.measures.irSensor[left_id] > 1.5:
-                    drawnMap[mapY][mapX+1] = '|'
-                else:
-                    drawnMap[mapY][mapX+1] = 'X'
+                    # drawnMap[mapY][mapX+1] = '|'
+                    self.addToMap(mapY,mapX+1,'|')
+
+        # if drawnMap[mapY+1][mapX] == "0" and (mapX,mapY+1) not in positions_to_visit:
+        #     pos = (mapX,mapY+1)
+        #     positions_to_visit.append(pos)
+        # if drawnMap[mapY-1][mapX] == "0" and (mapX,mapY-1) not in positions_to_visit:
+        #     pos = (mapX,mapY-1)
+        #     positions_to_visit.append(pos)
+        # if drawnMap[mapY][mapX+1] == "0" and (mapX+1,mapY) not in positions_to_visit:
+        #     pos = (mapX+1,mapY)
+        #     positions_to_visit.append(pos)
+        # if drawnMap[mapY][mapX-1] == "0" and (mapX-1,mapY) not in positions_to_visit:
+        #     pos = (mapX-1,mapY)
+        #     positions_to_visit.append(pos)
+        if drawnMap[mapY][mapX+1] == "0" and (mapX+1,mapY) not in positions_to_visit:
+            pos = (mapX+1,mapY)
+            positions_to_visit.append(pos)
+        if drawnMap[mapY][mapX-1] == "0" and (mapX-1,mapY) not in positions_to_visit:
+            pos = (mapX-1,mapY)
+            positions_to_visit.append(pos)
+        if drawnMap[mapY+1][mapX] == "0" and (mapX,mapY+1) not in positions_to_visit:
+            pos = (mapX,mapY+1)
+            positions_to_visit.append(pos)
+        if drawnMap[mapY-1][mapX] == "0" and (mapX,mapY-1) not in positions_to_visit:
+            pos = (mapX,mapY-1)
+            positions_to_visit.append(pos)
+
+        pos = (mapX,mapY)
+        if pos in positions_to_visit:
+            positions_to_visit.remove(pos)
             
+# Objective detection -----------------------------------------------------------------------------
+
+        if (self.measures.ground == 1  or self.measures.ground == 2) and prev_beacons != [300,300,300]:
+            obj_pos[self.measures.ground] = (mapX,mapY)
+            prev_beacons[self.measures.ground] = 300
+            if prev_beacons == [300,300,300]:
+                detected = True
             
-# Movement decision
-        #check rotation first
-       
-        movingHorizontaly = False
-        compass = self.measures.compass
+
+# Movement decision -------------------------------------------------------------------------------
         if toRotate > 0:
             if toRotate<0.3:
-                u = toRotate/2
+                u = toRotate/4
                 self.driveMotors(-u,u)
                 toRotate=0
             else:
                 toRotate -=0.3
                 self.driveMotors(-0.15,0.15)
-        elif toRotate < 0:
+        elif toRotate < 0 :
             if toRotate >-0.3:
-                u = toRotate/2
+                u = toRotate/4
                 self.driveMotors(-u,u)
                 toRotate=0
             else:
                 toRotate +=0.3
                 self.driveMotors(0.15,-0.15)
         else:
-            if abs(compass) < 60.0 or abs(compass) > 120.0:
-                movingHorizontaly = True
-            if movingHorizontaly:
-                if (round(posX))%2==0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
-                    print("Keep going forward")
-                    self.driveMotors(0.15,0.15)
-                else:   # We are at the center of the cell, we may go to the right
-                    if self.measures.irSensor[right_id] < 1.0\
-                        and ((abs(compass) < 60 and drawnMap[26 - (int(posY+0.5-2))][int(posX+0.5)] == '0') \
-                        or (abs(compass)>120 and drawnMap[26 - (int(posY+0.5+2))][int(posX+0.5)] == '0')):
-                        print('Rotate riiiiiiiiiiight')
-                        self.driveMotors(0.15,0.15)
-                        toRotate = -pi/2
-                    # if there is an open space to the left that we havent visited and we have already visited the front cell, turn left
-                    elif self.measures.irSensor[left_id] <1.0 \
-                        and (((abs(compass) < 60 and drawnMap[26 - (int(posY+0.5))][int(posX+0.5)+2] != '0') \
-                        and (abs(compass) < 60 and drawnMap[26 - (int(posY+0.5-2))][int(posX+0.5)] == '0')) \
-                        or ((abs(compass) > 120 and drawnMap[26 - (int(posY+0.5))][int(posX+0.5)-2] != '0' ) \
-                        and (abs(compass)>120 and drawnMap[26 - (int(posY+0.5+2))][int(posX+0.5)] == '0'))):
-                        print('Rotate leeeeeft')
-                        print(drawnMap[26 - (int(posY+0.5))][int(posX+0.5)+1]) if abs(compass) < 60 else print(drawnMap[26 - (int(posY+0.5))][int(posX+0.5)-1])
-                        self.driveMotors(0.15,0.15)
-                        toRotate = pi/2
-                    elif self.measures.irSensor[center_id] > 1.7 \
-                        and ((self.measures.irSensor[right_id]<2.0 and self.measures.irSensor[left_id]>1.5)\
-                        or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
-                        print('Dodge riiiiiiiiiiight')
-                        self.driveMotors(0.15,0.15)
-                        toRotate = -pi/2
-                    elif self.measures.irSensor[center_id] > 1.7 \
-                        and ((self.measures.irSensor[left_id]<2.0 and self.measures.irSensor[right_id]>1.5)\
-                        or self.measures.irSensor[left_id]<self.measures.irSensor[right_id]):
-                        print('Dodge leeeeft')
-                        self.driveMotors(0.15,0.15)
-                        toRotate = pi/2
-                    elif (compass>2 and compass <58) or (compass>-180 and compass<-122):
-                        print("Rotate slightly right")
-                        u = (abs(compass)%60/60)*Kp
-                        print("u: ",u)
-                        self.driveMotors(0.1+u,0.1-u)
-                    elif (compass<178 and compass >122) or (compass>-58 and compass<-2):
-                        print("Rotate slightly left")
-                        u = (abs(compass)%60/60)*Kp
-                        print("u: ",u)
-                        self.driveMotors(0.1-u,0.1+u)
-                    elif self.measures.irSensor[right_id]>5.0 or self.measures.irSensor[left_id]>5.0:
-                        print("Rotate slightly: ",e)
-                        self.driveMotors(0.1+e,0.1-e)
-                    else:
-                        print("Go")
-                        self.driveMotors(0.15,0.15)
+            if search:
+                self.searchAlgorithm(mapX,mapY)
+                print(positions_to_visit)
             else:
-                if (round(posY))%2 == 0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:
-                    print("Keep going forward")
-                    self.driveMotors(0.15,0.15)
-                else:
-                    if self.measures.irSensor[right_id] < 1.0 \
-                        and ((compass > 0 and drawnMap[26 -( int(posY+0.5))][int(posX+0.5)+2] == '0') \
-                        or (compass<0 and drawnMap[26 - (int(posY+0.5))][int(posX+0.5)-2] == '0')):
-                        print('Rotate riiiiiiiiiiight')
-                        self.driveMotors(0.15,0.15)
-                        toRotate = -pi/2
-                    elif self.measures.irSensor[left_id] <1.0\
-                        and (((compass > 0 and drawnMap[26 -( int(posY+0.5)+2)][int(posX+0.5)] != '0') \
-                        and (compass > 0 and drawnMap[26 -( int(posY+0.5))][int(posX+0.5)-2] == '0')) \
-                        or ((compass < 0 and drawnMap[26 -( int(posY+0.5)-2)][int(posX+0.5)] != '0') \
-                        and (compass < 0 and drawnMap[26 - (int(posY+0.5))][int(posX+0.5)+2] == '0'))):
-                        print('Rotate leeeeeft')
-                        print(drawnMap[26 -( int(posY+0.5)+2)][int(posX+0.5)]) if compass >0 else print(drawnMap[26 -( int(posY+0.5)-2)][int(posX+0.5)])
-                        self.driveMotors(0.15,0.15)
-                        toRotate = pi/2
-                    elif self.measures.irSensor[center_id] > 1.7 \
-                        and ((self.measures.irSensor[right_id]<2.0 and self.measures.irSensor[left_id]>1.5)\
-                        or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
-                        print('Dodge riiiiiiiiiiight')
-                        self.driveMotors(0.15,0.15)
-                        toRotate = -pi/2
-                    elif self.measures.irSensor[center_id] > 1.7 \
-                        and ((self.measures.irSensor[left_id]<2.0 and self.measures.irSensor[right_id]>1.5)\
-                        or self.measures.irSensor[left_id]<self.measures.irSensor[right_id]):
-                        print('Dodge leeeeeft')
-                        self.driveMotors(0.15,0.15)
-                        toRotate = pi/2
-                    elif (compass>92 and compass <118) or (compass>-88 and compass<-62):
-                        print("Rotate slightly right")
-                        u = (abs(compass)%90/90)*Kp
-                        print("u: ",u)
-                        self.driveMotors(0.1+u,0.1-u)
-                    elif (compass<88 and compass >62) or (compass>-118 and compass<-92):
-                        print("Rotate slightly left")
-                        u = (abs(compass)%90/90)*Kp
-                        print("u: ",u)
-                        self.driveMotors(0.1-u,0.1+u)
-                    elif self.measures.irSensor[right_id]>5.0 or self.measures.irSensor[left_id]>5.0:
-                        print("Rotate slightly: ",e)
-                        self.driveMotors(0.1+e,0.1-e)
-                    else:
-                        print("Go")
-                        self.driveMotors(0.15,0.15)
-        print("movingHorizontaly: ",movingHorizontaly)
-        print("toRotate: ",toRotate)
-                
-
-        
-        # if self.measures.irSensor[right_id] < 1.8:
-        #     print('Rotate riiiiiiiiiiight')
-        #     self.driveMotors(0.15,-0.10)
-        # elif   self.measures.irSensor[center_id] > 1.7 \
-        #     and ((self.measures.irSensor[right_id]<2.7 and self.measures.irSensor[left_id]>2.0)\
-        #     or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
-        #     print('Rotate riiiiiiiiiight')
-        #     self.driveMotors(-0.15,+0.15)
-        # elif   self.measures.irSensor[center_id] > 1.7 \
-        #     and ((self.measures.irSensor[left_id]<2.7 and self.measures.irSensor[right_id]>2.0)\
-        #     or self.measures.irSensor[left_id]<self.measures.irSensor[right_id]):
-        #     print('Rotate leeeeeeeeeeft')
-        #     self.driveMotors(-0.15,+0.15)
-        # elif self.measures.irSensor[left_id]> 2.5 :
-        #     print('Rotate slowly right')
-        #     deltav = e*Kp/2
-        #     print("deltav: ",deltav)
-        #     self.driveMotors(0.12+deltav,0.12-deltav)
-        # elif (self.measures.irSensor[right_id]> 2.5 ) :
-        #     print('Rotate slowly left')
-        #     deltav = e*Kp
-        #     print("deltav: ",deltav)
-        #     self.driveMotors(0.12+deltav,0.12-deltav)
-        # else:
-        #     print('Go')
-        #     self.driveMotors(0.15,0.15)
+                print("Roaming")
+                self.roam(mapX,mapY)     
         print()
 
-    def controller(self):
-        global e_m1, e_m2, u_m1
-        
+    def getClosestPosIdx(self,positions_to_visit,mapX,mapY):
+        minDist = 1000
+        closestIdx = 0
+        for i in range(len(positions_to_visit)):
+            pos = positions_to_visit[i]
+            if drawnMap[pos[1]][pos[0]] != "0":
+                continue
+            path = self.a_star(drawnMap,(mapX,mapY),pos)
+            # print("testing: ",pos," generated path: ",path)
+            dist = len(path)
+            if dist < minDist:
+                minDist = dist
+                closestIdx = i
+        return closestIdx
+
+    def roam(self,mapX,mapY):
+        global toRotate, turning, positions_to_visit,search,path
         center_id = 0
         left_id = 1
         right_id = 2
         back_id = 3
-
-        Kp = 0.015    
-        h = 1.5
-        u=0
-        max_u = 0.05
-
-        Td = 0*h     # Td - differential time
-        K0 = Kp*(1+Td/h)
-        K1 = -Kp*(1+2*Td/h)
-        K2 = Kp*Td/h
-        e = self.measures.irSensor[left_id]-self.measures.irSensor[right_id]
-        u = u_m1 + K0*e + K1*e_m1 + K2*e_m2
-        print(self.measures.beacon)
-
-        print("center: ",self.measures.irSensor[center_id])
-        print("left: ",self.measures.irSensor[left_id])
-        print("right: ",self.measures.irSensor[right_id])
-        print("back: ",self.measures.irSensor[back_id])
-        if self.measures.irSensor[center_id] > 1.0 \
-            and ((self.measures.irSensor[right_id]<2.0 and self.measures.irSensor[left_id]>1.5)\
-            or self.measures.irSensor[right_id]<self.measures.irSensor[left_id]):
-            print('Rotate riiiiiiiiiiight')
-            u=0.25
-        elif   self.measures.irSensor[center_id] > 1.0 \
-            and ((self.measures.irSensor[left_id]<2.0 and self.measures.irSensor[right_id]>1.5)\
-            or self.measures.irSensor[left_id]<self.measures.irSensor[right_id]):
-            print('Rotate leeeeeeeeeeft')
-            u=-0.25
-        elif e > 1:#self.measures.irSensor[left_id]> 2.5 :
-            print('Rotate slowly right')
-            e_m2 = e_m1
-            e_m1 = e
-            u_m1 = u
-
-            #Clip the control signal to avoid saturation
-            if(u > max_u):
-                u = max_u
+        #check rotation first
+        movingHorizontaly = False
+        # compass = self.measures.compass
+        if drawnMap[mapY][mapX+1] != "0" and drawnMap[mapY][mapX-1] != "0" and drawnMap[mapY+1][mapX] !="0" and drawnMap[mapY-1][mapX] != "0":
+            search = True
+            self.driveMotors(0.0,0.0)
+            try:
+                pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
+                    pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                print("pos_to_reach: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
+                path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
+                print("path: ",path)
+            except:
+                self.printDrawnMap()
+                path = self.findPath(obj_pos[0],obj_pos[1],obj_pos[2])
+                self.savePath(path)
+                self.finish()
+                return
+            return
+        
+        if abs(self.measures.compass) < 60.0 or abs(self.measures.compass) > 120.0:
+            movingHorizontaly = True
+        if movingHorizontaly:
+            # if (mapX)%2==0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
+            #     print("Keep going forward")
+            #     self.driveMotors(0.1,0.1)
+            # else:   # We are at the center of the cell, we may go to the right
             
-            if (u < -max_u):
-                u = -max_u
-            print("u before: ",u)
-        elif e<-1: #(self.measures.irSensor[right_id]> 2.5 ) :
-            print('Rotate slowly left')
-            e_m2 = e_m1
-            e_m1 = e
-            u_m1 = u
-
-            #Clip the control signal to avoid saturation
-            if(u > max_u):
-                u = max_u
-            
-            if (u < -max_u):
-                u = -max_u
-            print("u before: ",u)
-
-           
+            if self.measures.irSensor[right_id] < 1.2\
+            and ((abs(self.measures.compass) < 60 and drawnMap[mapY+1][mapX] == '0') \
+            or (abs(self.measures.compass)>120 and drawnMap[mapY-1][mapX] == '0')):
+                if (mapX)%2==0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
+                    print("Keep going forward")
+                    self.driveMotors(0.1,0.1)
+                else:
+                    print('Rotate riiiiiiiiiiight')
+                    self.driveMotors(0.15,0.15)
+                    toRotate = -pi/2
+            # if there is an open space to the left that we havent visited and we have already visited the front cell, turn left
+            elif self.measures.irSensor[left_id] <1.0 \
+                and (((abs(self.measures.compass) < 60 and drawnMap[mapY][mapX+1] != '0') \
+                and (abs(self.measures.compass) < 60 and drawnMap[mapY-1][mapX] == '0')) \
+                or ((abs(self.measures.compass) > 120 and drawnMap[mapY][mapX-1] != '0' ) \
+                and (abs(self.measures.compass)>120 and drawnMap[mapY+1][mapX] == '0'))):
+                if (mapX)%2==0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
+                    print("Keep going forward")
+                    self.driveMotors(0.1,0.1)
+                else:
+                    print('Rotate leeeeeft')
+                    # print(drawnMap[mapY][mapX+1]) if abs(self.measures.compass) < 60 else print(drawnMap[26 - (int(posY+0.5))][int(posX+0.5)-1])
+                    self.driveMotors(0.15,0.15)
+                    toRotate = pi/2
+                
+            elif (self.measures.compass>1 and self.measures.compass <59) or (self.measures.compass>-179 and self.measures.compass<-121):
+                print("Rotate slightly right")
+                if self.measures.compass > 0:
+                    toRotate = (0-self.measures.compass)*pi/180
+                else:
+                    toRotate = (-180-self.measures.compass)*pi/180
+            elif (self.measures.compass<179 and self.measures.compass >121) or (self.measures.compass>-59 and self.measures.compass<-1):
+                print("Rotate slightly left")
+                if self.measures.compass > 0:
+                    toRotate = (180 - self.measures.compass)*pi/180
+                else:
+                    toRotate = (0 - self.measures.compass)* pi/180
+            elif self.measures.irSensor[center_id] > 1.7 and self.measures.irSensor[left_id] >1.3 and self.measures.irSensor[right_id]>1.3:
+                print('------> TURN AROUND <-------- ')
+                self.driveMotors(0.0,0.0)
+                toRotate = pi
+                search = True
+                try:
+                    pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                    while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
+                        pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                        print("checking: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
+                    print("pos_to_reach: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
+                    path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
+                    print("path: ",path)
+                except:
+                    self.printDrawnMap()
+                    path = self.findPath(obj_pos[0],obj_pos[1],obj_pos[2])
+                    self.savePath(path)
+                    self.finish()                       
+                    return
+            else:
+                print("Go")
+                self.driveMotors(0.15,0.15)
         else:
-            u=None
+            # if (mapY)%2 == 0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:
+            #     print("Keep going forward")
+            #     self.driveMotors(0.1,0.1)
+            # else:
+            if self.measures.irSensor[right_id] < 1.2 \
+            and ((self.measures.compass > 0 and drawnMap[mapY][mapX+1] == '0') \
+            or (self.measures.compass<0 and drawnMap[mapY][mapX-1] == '0')):
+                if (mapY)%2 == 0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:
+                    print("Keep going forward")
+                    self.driveMotors(0.1,0.1)
+                else:
+                    print('Rotate riiiiiiiiiiight')
+                    self.driveMotors(0.15,0.15)
+                    toRotate = -pi/2
+            elif self.measures.irSensor[left_id] <1.0\
+            and (((self.measures.compass > 0 and drawnMap[mapY-1][mapX] != '0') \
+            and (self.measures.compass > 0 and drawnMap[mapY][mapX-1] == '0')) \
+            or ((self.measures.compass < 0 and drawnMap[mapY+1][mapX] != '0') \
+            and (self.measures.compass < 0 and drawnMap[mapY][mapX+1] == '0'))):
+                if (mapY)%2 == 0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:
+                    print("Keep going forward")
+                    self.driveMotors(0.1,0.1)
+                else:
+                    print('Rotate leeeeeft')
+                    # print(drawnMap[26 -( int(posY+0.5)+2)][int(posX+0.5)]) if self.measures.compass >0 else print(drawnMap[26 -( int(posY+0.5)-2)][int(posX+0.5)])
+                    self.driveMotors(0.15,0.15)
+                    toRotate = pi/2
+            elif (self.measures.compass>91 and self.measures.compass <119) or (self.measures.compass>-89 and self.measures.compass<-61):
+                print("Rotate slightly right")
+                if self.measures.compass > 0:
+                    toRotate = (90-self.measures.compass)*pi/180
+                else:
+                    toRotate = (-90-self.measures.compass)*pi/180
+            elif (self.measures.compass<89 and self.measures.compass >61) or (self.measures.compass>-119 and self.measures.compass<-91):
+                print("Rotate slightly left")
+                if self.measures.compass > 0:
+                    toRotate = (90-self.measures.compass)*pi/180
+                else:
+                    toRotate = (-90-self.measures.compass)*pi/180
+            elif self.measures.irSensor[center_id] > 1.7 and self.measures.irSensor[left_id] >1.7 and self.measures.irSensor[right_id]>1.7:
+                print('------> TURN AROUND <-------- ')
+                self.driveMotors(0.15,0.15)
+                toRotate = pi
+                try:
+                    search = True
+                    pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                    while drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "0":
+                        pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
+                        print("checking: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
+                    print("pos_to_reach: ",pos_to_reach, "value: ",drawnMap[pos_to_reach[1]][pos_to_reach[0]])
+                    path = self.a_star(drawnMap,(mapX,mapY),pos_to_reach)
+                    print("path: ",path)
+                except:
+                    self.printDrawnMap()
+                    path = self.findPath(obj_pos[0],obj_pos[1],obj_pos[2])
+                    self.savePath(path)
+                    self.finish()
+                    return
+            else:
+                print("Go")
+                self.driveMotors(0.15,0.15)
 
-        return u
+        print("movingHorizontaly: ",movingHorizontaly)
 
+            
+    def a_star(self,grid, start, goal): # returns a path from "start" to "goal" using A*
+        def heuristic(a, b):
+            # Manhattan distance on a square grid
+            return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+        # Directions (down, up, right, left) for movement
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        open_list = []
+        heapq.heappush(open_list, (0, start))  # (cost, cell)
+        came_from = {start: None}
+        cost_so_far = {start: 0}
+
+        while open_list:
+            current_cost, current = heapq.heappop(open_list)
+
+            # If the goal is reached, reconstruct path
+            if (abs(current[0]- goal[0]) == 1  and abs(current[1]-goal[1])==0)or( abs(current[1]-goal[1])==1 and abs(current[0]-goal[0])==0):
+                path = []
+                while current:
+                    path.append(current)
+                    current = came_from[current]
+                return path[::-1]  # Return reversed path
+
+            for direction in directions:
+                neighbor = (current[0] + direction[0], current[1] + direction[1])
+
+                # Check bounds and that neighbor is walkable
+                if grid[neighbor[1]][neighbor[0]] == 'X' or grid[neighbor[1]][neighbor[0]] == 'I':
+                #and 0 <= neighbor[0] < len(grid) and 0 <= neighbor[1] < len(grid[0])  :
+                    new_cost = cost_so_far[current] + 1  # Each step costs 1
+
+                    if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
+                        cost_so_far[neighbor] = new_cost
+                        priority = new_cost + heuristic(neighbor, goal)
+                        heapq.heappush(open_list, (priority, neighbor))
+                        came_from[neighbor] = current
+        return None  # Return None if no path is found
+
+
+    def searchAlgorithm(self,mapX,mapY):
+        global toRotate, turning, positions_to_visit,search,path
+        center_id = 0
+        left_id = 1
+        right_id = 2
+        back_id = 3
+        #check rotation first
+        print("SEARCH")
+        print("path: ",path)
+        # exit()
+        #plan the path
+        if path[0] == (mapX,mapY):
+            path.pop(0)
+            if path == []:
+                search = False
+                return
+        next_position = path[0]
+        diff = (next_position[0]-mapX,next_position[1]-mapY)
+        print("diff: ",diff)
+        movingHorizontaly = False
+        # compass = self.measures.compass
+        if diff[0]!=0:  # move horizontaly
+            if mapX%2==0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
+                print("Keep going forward")
+                self.driveMotors(0.15,0.15)
+            if diff[0]==1: # if we have to move to the right
+                if abs(self.measures.compass)>2:
+                    toRotate = (0-self.measures.compass)*pi/180
+                else:
+                    print("Go")
+                    self.driveMotors(0.15,0.15)
+
+            else: # if we have to move to the left
+                if abs(self.measures.compass)<178:
+                    if self.measures.compass > 0:
+                        toRotate = (180-self.measures.compass)*pi/180
+                    else:
+                        toRotate = (-180-self.measures.compass)*pi/180
+                else:
+                    print("Go")
+                    self.driveMotors(0.15,0.15)
+
+        else:
+            if mapY%2 == 0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:
+                print("Keep going forward")
+                self.driveMotors(0.15,0.15)
+            if diff[1]==1: # if we have to go down
+                if self.measures.compass>-88 or self.measures.compass<-92:
+                    toRotate = (-90-self.measures.compass)*pi/180
+                else:
+                    print("Go")
+                    self.driveMotors(0.15,0.15)
+            else: # if we have to go up
+                if self.measures.compass<88 or self.measures.compass>92:
+                    toRotate = (90-self.measures.compass)*pi/180
+                else:
+                    print("Go")
+                    self.driveMotors(0.15,0.15)
+        print("movingHorizontaly: ",movingHorizontaly)
+        
+        print()
+        return 
+                    
     def printDrawnMap(self):
         for i in drawnMap:
             print("".join(i[:55]).replace('0',' '))
-    
-    def writeDrawnMap(self):
-        mapFile = open("outMap.map", "w")
-        mapFile.write("")
-        mapFile.close()
-        mapOut = open("outMap.map", "a")
-        for i in drawnMap:
-            map.write("".join(i[:55]).replace('0',' '))
-        mapOut.close()
+            
+    def printPath(self,path):
+        for i in path:
+            print(f"{i[0]} {i[1]}")
+            
+    def findPath(self,obj1,obj2,obj3):
+        path = []
+        path += self.a_star(drawnMap,obj1,obj2)
+        path += self.a_star(drawnMap,obj2,obj3)
+        path += self.a_star(drawnMap,obj3,obj1)
+        path.append(obj1)
+        return path
+        
+    def savePath(self, path):
+        pathFile = open("outPath.out", "w")
+        pathFile.write("")
+        pathFile.close()
+        pathOut = open("outPath.out", "a")
+        for i in path:
+            if i[0]%2 == 1 and i[1]%2 == 1:
+                pathOut.write(f"{i[0]-27} {13-i[1]}\n")
+        pathOut.close()
         
 
 class Map():
@@ -468,7 +601,6 @@ for i in range(1, len(sys.argv),2):
 
 if __name__ == '__main__':
     rob=MyRob(rob_name,pos,[0.0,90.0,-90.0,180.0],host)
-    rob.printDrawnMap()
     if mapc != None:
         rob.setMap(mapc.labMap)
         rob.printMap()

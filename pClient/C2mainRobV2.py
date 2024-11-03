@@ -102,7 +102,7 @@ class MyRob(CRobLinkAngs):
         # print("left: ",self.measures.irSensor[left_id])
         # print("right: ",self.measures.irSensor[right_id])
         # print("back: ",self.measures.irSensor[back_id])
-        self.printDrawnMap()
+        # self.printDrawnMap()
         print("mapX:", mapX)
         print("mapY: ",mapY)
         print("rotation: ",rotation)
@@ -330,6 +330,7 @@ class MyRob(CRobLinkAngs):
                     self.writeDrawnMap()
                 except:
                     self.printDrawnMap()
+                    self.writeDrawnMap()
                     self.finish()                       
                     return
             else:
@@ -391,6 +392,7 @@ class MyRob(CRobLinkAngs):
                     self.writeDrawnMap()
                 except:
                     self.printDrawnMap()
+                    self.writeDrawnMap()
                     self.finish()
                     return
             else:
@@ -564,7 +566,7 @@ for i in range(1, len(sys.argv),2):
 
 if __name__ == '__main__':
     rob=MyRob(rob_name,pos,[0.0,90.0,-90.0,180.0],host)
-    rob.printDrawnMap()
+    # rob.printDrawnMap()
     if mapc != None:
         rob.setMap(mapc.labMap)
         rob.printMap()

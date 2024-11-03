@@ -24,4 +24,6 @@ fazemos um algoritmo tipo A* para visitar esses espaços.
  - - - - - - - - - - - - - -
 
 
- 
+C3
+
+Se o robo detectar um beacon
