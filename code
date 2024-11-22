@@ -1,0 +1,50 @@
+wall_posX, wall_posY = 0,0
+        if self.measures.irSensor[right_id] > 1.5:
+            if abs(rotation) < 4:
+                wall_posY = mapY+1
+                posY = wall_posY-0.1 - 1/(self.measures.irSensor[right_id]) - 0.5
+            elif abs(rotation) >= 176:
+                wall_posY = mapY-1
+                posY = wall_posY+0.1 + 1/(self.measures.irSensor[right_id]) + 0.5   
+
+            elif rotation > 86 and rotation<94:
+                wall_posX = mapX+1
+                posX = wall_posX-0.1 - 1/(self.measures.irSensor[right_id]) - 0.5
+            elif rotation > -94 and rotation < -86:
+                wall_posX = mapX-1
+                posX = wall_posX+0.1 + 1/(self.measures.irSensor[right_id]) + 0.5    
+
+
+        elif self.measures.irSensor[left_id] > 1.5:
+            if abs(rotation) < 4:
+                wall_posY = mapY-1
+                posY = wall_posY+0.1 + 1/(self.measures.irSensor[left_id]) + 0.5   
+            elif abs(rotation) >= 176:
+                wall_posY = mapY+1
+                posY = wall_posY-0.1 - 1/(self.measures.irSensor[left_id]) - 0.5 
+
+            elif rotation > -94 and rotation < -86:
+                wall_posX = mapX+1
+                posX = wall_posX-0.1 - 1/(self.measures.irSensor[left_id]) - 0.5   
+            elif rotation > 86 and rotation<94:
+                wall_posX = mapX-1
+                posX = wall_posX+0.1 + 1/(self.measures.irSensor[left_id]) + 0.5  
+
+
+        if self.measures.irSensor[center_id] > 1.5:
+            if abs(rotation) < 4:
+                wall_posX = mapX+1
+                posX = wall_posX-0.1 - 1/(self.measures.irSensor[center_id]) - 0.5   
+            elif abs(rotation) >= 176:
+                wall_posX = mapX-1
+                posX = wall_posX+0.1 + 1/(self.measures.irSensor[center_id]) + 0.5  
+
+            elif rotation > -94 and rotation < -86:
+                wall_posY = mapY+1
+                posY = wall_posY-0.1 - 1/(self.measures.irSensor[center_id]) - 0.5 
+            elif rotation > 86 and rotation<94:
+                wall_posY = mapY-1
+                posY = wall_posY+0.1 + 1/(self.measures.irSensor[center_id]) + 0.5   
+            
+        print("walls: ",wall_posX,wall_posY)
+        

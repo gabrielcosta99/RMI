@@ -36,3 +36,10 @@ encostar a parede direita se na 1ª volta, a esquerda na segunda
 Se estiver no centro da celula, vira para a direita
     Se o robo se estiver a mexer na vertical. Se NAO estiver no centro da celula (posY %2==0) continua em frente. 
 Se estiver no centro da celula, vira para a direita
+
+
+calcultateOut(inL,inR){
+    global outL,outR
+    outL =...(outL)
+    outR =...(outR)
+}
