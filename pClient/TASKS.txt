@@ -1,5 +1,5 @@
 [] Por o nº de beacons dinamico (não é sempre 3)
-
+[] Lidar com os arredondamentos errados
 
 
 

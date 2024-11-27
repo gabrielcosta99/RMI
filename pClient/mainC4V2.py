@@ -63,11 +63,11 @@ class MyRob(CRobLinkAngs):
         posX += lin * cos(rot*pi/180)
         posY -= lin * sin(rot*pi/180)
     
-    def customRound(self,value):
-        decimal = value*10%10 # get the decimal value ex: 28.76 -> decimal = 7
-        if decimal >=7:
-            return int(value+1)
-        return int(value)
+    def nearestPair(self,value):
+        value = int(value)
+        if value%2 == 0:
+            return value
+        return value+1
 
     def run(self):
         global initialX, initialY
@@ -126,8 +126,8 @@ class MyRob(CRobLinkAngs):
         gpsPosX = self.measures.x - initialX
         gpsPosY = 26 - (self.measures.y - initialY)
         rotation = self.measures.compass
-        mapX = self.customRound(posX)
-        mapY = self.customRound(posY)
+        mapX =round(posX)
+        mapY =round(posY)
         self.printDrawnMap()
         
         print("rotation: ",rotation)
@@ -147,55 +147,67 @@ class MyRob(CRobLinkAngs):
 # Adjust positions --------------------------------------------------------------
         ### FIX THIS
         wall_posX, wall_posY = 0,0
-        if self.measures.irSensor[right_id] > 2:
+        if self.measures.irSensor[right_id] > self.measures.irSensor[left_id]:
             if abs(rotation) < 4:
-                wall_posY = mapY+1 if mapY%2==1 else mapY
+                wall_posY = self.nearestPair(posY+1/self.measures.irSensor[center_id])
+                # wall_posY = mapY+1 if mapY%2==1 else mapY
                 posY = wall_posY-0.1 - 1/(self.measures.irSensor[right_id]) - 0.5
             elif abs(rotation) >= 176:
-                wall_posY = mapY-1 if mapY%2==1 else mapY
+                wall_posY = self.nearestPair(posY-1/self.measures.irSensor[center_id])
+                # wall_posY = mapY-1 if mapY%2==1 else mapY
                 posY = wall_posY+0.1 + 1/(self.measures.irSensor[right_id]) + 0.5   
 
             elif rotation > 86 and rotation<94:
-                wall_posX = mapX+1 if mapX%2==1 else mapX
+                wall_posX = self.nearestPair(posX+1/self.measures.irSensor[center_id])
+                # wall_posX = mapX+1 if mapX%2==1 else mapX
                 posX = wall_posX-0.1 - 1/(self.measures.irSensor[right_id]) - 0.5
             elif rotation > -94 and rotation < -86:
-                wall_posX = mapX-1 if mapX%2==1 else mapX
+                wall_posX = self.nearestPair(posX-1/self.measures.irSensor[center_id])
+                # wall_posX = mapX-1 if mapX%2==1 else mapX
                 posX = wall_posX+0.1 + 1/(self.measures.irSensor[right_id]) + 0.5    
 
 
-        elif self.measures.irSensor[left_id] > 2:
+        else:
             if abs(rotation) < 4:
-                wall_posY = mapY-1 if mapY%2==1 else mapY
+                wall_posY = self.nearestPair(posY-1/self.measures.irSensor[left_id])
+                # wall_posY = mapY-1 if mapY%2==1 else mapY
                 posY = wall_posY+0.1 + 1/(self.measures.irSensor[left_id]) + 0.5   
             elif abs(rotation) >= 176:
-                wall_posY = mapY+1 if mapY%2==1 else mapY
+                wall_posY = self.nearestPair(posY+1/self.measures.irSensor[left_id])
+                # wall_posY = mapY+1 if mapY%2==1 else mapY
                 posY = wall_posY-0.1 - 1/(self.measures.irSensor[left_id]) - 0.5 
 
             elif rotation > -94 and rotation < -86:
-                wall_posX = mapX+1 if mapX%2==1 else mapX
+                wall_posY = self.nearestPair(posY+1/self.measures.irSensor[left_id])
+                # wall_posX = mapX+1 if mapX%2==1 else mapX
                 posX = wall_posX-0.1 - 1/(self.measures.irSensor[left_id]) - 0.5   
             elif rotation > 86 and rotation<94:
-                wall_posX = mapX-1 if mapX%2==1 else mapX
+                wall_posY = self.nearestPair(posY-1/self.measures.irSensor[left_id])
+                # wall_posX = mapX-1 if mapX%2==1 else mapX
                 posX = wall_posX+0.1 + 1/(self.measures.irSensor[left_id]) + 0.5  
 
 
-        if self.measures.irSensor[center_id] > 2:
+        if self.measures.irSensor[center_id]:
             if abs(rotation) < 4:
-                wall_posX = mapX+1 if mapX%2==1 else mapX
+                wall_posX = self.nearestPair(posX+1/self.measures.irSensor[center_id])
+                # wall_posX = mapX+1 if mapX%2==1 else mapX
                 posX = wall_posX-0.1 - 1/(self.measures.irSensor[center_id]) - 0.5   
             elif abs(rotation) >= 176:
-                wall_posX = mapX-1 if mapX%2==1 else mapX
+                wall_posX = self.nearestPair(posX-1/self.measures.irSensor[center_id])
+                # wall_posX = mapX-1 if mapX%2==1 else mapX
                 posX = wall_posX+0.1 + 1/(self.measures.irSensor[center_id]) + 0.5  
 
             elif rotation > -94 and rotation < -86:
-                wall_posY = mapY+1 if mapY%2==1 else mapY
+                wall_posY = self.nearestPair(posY+1/self.measures.irSensor[center_id])
+                # wall_posY = mapY+1 if mapY%2==1 else mapY
                 posY = wall_posY-0.1 - 1/(self.measures.irSensor[center_id]) - 0.5 
             elif rotation > 86 and rotation<94:
-                wall_posY = mapY-1 if mapY%2==1 else mapY
+                wall_posY = self.nearestPair(posY-1/self.measures.irSensor[center_id])
+                # wall_posY = mapY-1 if mapY%2==1 else mapY
                 posY = wall_posY+0.1 + 1/(self.measures.irSensor[center_id]) + 0.5   
             
-        mapX = self.customRound(posX)
-        mapY = self.customRound(posY)
+        mapX =round(posX)
+        mapY =round(posY)
         print("mapX:", mapX)
         print("mapY: ",mapY)
         print("posX: ",posX)
