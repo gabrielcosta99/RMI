@@ -4,6 +4,7 @@ from croblink import *
 from math import *
 import xml.etree.ElementTree as ET
 import heapq
+import math
 
 CELLROWS=7
 CELLCOLS=14
@@ -25,6 +26,19 @@ obj_pos = [(27,13),(0,0),(0,0)]
 prev_beacons = [300,200,200]
 detected = False
 
+# def nearestOdd(num):
+#     rounded = round(num)
+#     if rounded % 2 == 0:
+#         if num > 0:
+#             return rounded + 1
+#         else:
+#             return rounded - 1
+#     return rounded
+def nearestOdd(num):
+    rounded = int(num)
+    if rounded % 2 == 0:
+        return rounded + 1
+    return rounded
 class MyRob(CRobLinkAngs):
     def __init__(self, rob_name, rob_id, angles, host):
         CRobLinkAngs.__init__(self, rob_name, rob_id, angles, host)
@@ -63,11 +77,103 @@ class MyRob(CRobLinkAngs):
         posX += lin * cos(rot*pi/180)
         posY -= lin * sin(rot*pi/180)
     
-    def customRound(self,value):
-        decimal = value*10%10 # get the decimal value ex: 28.76 -> decimal = 7
-        if decimal >=7:
-            return int(value+1)
-        return int(value)
+    # def customRound(self,value):
+    #     decimal = value*10%10 # get the decimal value ex: 28.76 -> decimal = 7
+    #     if decimal >=7:
+    #         return int(value+1)
+    #     return int(value)
+        
+    def rotToAxis(self):
+        if abs(self.measures.compass) <= 5:
+            return 'E'                                   # right
+        elif self.measures.compass >= 85 and  self.measures.compass <= 95:
+            return 'N'                                   # up
+        elif abs(self.measures.compass) >= 175:
+            return 'W'                                    # left
+        elif self.measures.compass >= -95 and  self.measures.compass <= -85:
+            return 'S'                                    # down
+        elif self.measures.compass > 5 and self.measures.compass < 45:
+            return 'ENE'                                   # 1st quadrant
+        elif self.measures.compass >= 45 and self.measures.compass < 85:
+            return 'NNE'                                   # 1st quadrant
+        elif self.measures.compass > 95 and self.measures.compass < 135:
+            return 'NNW'                                   # 2nd quadrant
+        elif self.measures.compass >= 135 and self.measures.compass < 175:
+            return 'WNW'                                   # 2nd quadrant
+        elif self.measures.compass > -175 and self.measures.compass <= -135:
+            return 'WSW'                                   # 3rd quadrant
+        elif self.measures.compass > -135 and self.measures.compass < -95:
+            return 'SSW'                                   # 3rd quadrant
+        elif self.measures.compass > -85 and self.measures.compass <= -45:
+            return 'SSE'                                   # 4th quadrant
+        elif self.measures.compass > -45 and self.measures.compass < -5:
+            return 'ESE'                                   # 4th quadrant
+        
+    def calibratePos(self):
+        global posX, posY
+        center_id = 0
+        left_id = 1
+        right_id = 2
+        rotAx = self.rotToAxis()
+        auxX = nearestOdd(posX)
+        auxY = nearestOdd(posY)
+        
+        if self.measures.irSensor[center_id] > 1.5:
+            if rotAx == 'E':
+                posX = auxX + 1 + 1/(self.measures.irSensor[center_id]) - 0.6
+            elif rotAx == 'N':
+                posY = auxY - 1 + 1/(self.measures.irSensor[center_id]) + 0.6
+            elif rotAx == 'W':
+                posX = auxX - 1 + 1/(self.measures.irSensor[center_id]) + 0.6
+            elif rotAx == 'S':
+                posY = auxY + 1 + 1/(self.measures.irSensor[center_id]) - 0.6
+                
+            elif rotAx == 'ENE' or rotAx == 'ESE':
+                posX = auxX + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+            elif rotAx == 'NNE' or rotAx == 'NNW':
+                posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
+            elif rotAx == 'WNW' or rotAx == 'WSW':
+                posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
+            elif rotAx == 'SNE' or rotAx == 'SNW':
+                posY = auxY + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+        
+        elif self.measures.irSensor[right_id] > 1.5:
+            if rotAx == 'E':
+                posY = auxY + 1 + 1/(self.measures.irSensor[right_id]) - 0.6
+            elif rotAx == 'N':
+                posX = auxX + 1 + 1/(self.measures.irSensor[right_id]) - 0.6
+            elif rotAx == 'W':
+                posY = auxY - 1 + 1/(self.measures.irSensor[right_id]) + 0.6
+            elif rotAx == 'S':
+                posX = auxX - 1 + 1/(self.measures.irSensor[right_id]) + 0.6
+                
+            elif rotAx == 'ENE' or rotAx == 'ESE':
+                posY = auxY + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+            elif rotAx == 'NNE' or rotAx == 'NNW':
+                posX = auxX + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+            elif rotAx == 'WNW' or rotAx == 'WSW':
+                posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
+            elif rotAx == 'SNE' or rotAx == 'SNW':
+                posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) + 0.6
+        
+        elif self.measures.irSensor[left_id] > 1.5:
+            if rotAx == 'E':
+                posX = auxX - 1 + 1/(self.measures.irSensor[right_id]) + 0.6
+            elif rotAx == 'N':
+                posX = auxX + 1 + 1/(self.measures.irSensor[right_id]) - 0.6
+            elif rotAx == 'W':
+                posY = auxY + 1 + 1/(self.measures.irSensor[right_id]) - 0.6
+            elif rotAx == 'S':
+                posX = auxX + 1 + 1/(self.measures.irSensor[right_id]) - 0.6
+                
+            elif rotAx == 'ENE' or rotAx == 'ESE':
+                posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
+            elif rotAx == 'NNE' or rotAx == 'NNW':
+                posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) + 0.6
+            elif rotAx == 'WNW' or rotAx == 'WSW':
+                posY = auxY + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+            elif rotAx == 'SNE' or rotAx == 'SNW':
+                posX = auxX + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
 
     def run(self):
         global initialX, initialY
@@ -126,8 +232,8 @@ class MyRob(CRobLinkAngs):
         gpsPosX = self.measures.x - initialX
         gpsPosY = 26 - (self.measures.y - initialY)
         rotation = self.measures.compass
-        mapX = self.customRound(posX)
-        mapY = self.customRound(posY)
+        # mapX = round(posX)
+        # mapY = round(posY)
         self.printDrawnMap()
         
         print("rotation: ",rotation)
@@ -140,68 +246,69 @@ class MyRob(CRobLinkAngs):
         print("beacon:", self.measures.beacon)
         print("objectives:", obj_pos)
 
+        self.calibratePos()
+        mapX = round(posX)
+        mapY = round(posY)
+        print("mapX:", mapX)
+        print("mapY: ",mapY)
+        print("posX: ",posX)
+        print("posY: ",posY)
+        print("gpsPosX and Y: ",gpsPosX,gpsPosY)
+        # print("walls: ",wall_posX,wall_posY)
         if drawnMap[mapY][mapX] == '0' and (mapY % 2 == 1 or mapX % 2 == 1):
             drawnMap[mapY][mapX] = 'X'
             # print(drawnMap[mapY][mapX])
 
 # Adjust positions --------------------------------------------------------------
         ### FIX THIS
-        wall_posX, wall_posY = 0,0
-        if self.measures.irSensor[right_id] > 2:
-            if abs(rotation) < 4:
-                wall_posY = mapY+1 if mapY%2==1 else mapY
-                posY = wall_posY-0.1 - 1/(self.measures.irSensor[right_id]) - 0.5
-            elif abs(rotation) >= 176:
-                wall_posY = mapY-1 if mapY%2==1 else mapY
-                posY = wall_posY+0.1 + 1/(self.measures.irSensor[right_id]) + 0.5   
+        # wall_posX, wall_posY = 0,0
+        # if self.measures.irSensor[right_id] > 2:
+        #     if abs(rotation) < 4:
+        #         wall_posY = mapY+1 if mapY%2==1 else mapY
+        #         posY = wall_posY-0.1 - 1/(self.measures.irSensor[right_id]) - 0.5
+        #     elif abs(rotation) >= 176:
+        #         wall_posY = mapY-1 if mapY%2==1 else mapY
+        #         posY = wall_posY+0.1 + 1/(self.measures.irSensor[right_id]) + 0.5   
 
-            elif rotation > 86 and rotation<94:
-                wall_posX = mapX+1 if mapX%2==1 else mapX
-                posX = wall_posX-0.1 - 1/(self.measures.irSensor[right_id]) - 0.5
-            elif rotation > -94 and rotation < -86:
-                wall_posX = mapX-1 if mapX%2==1 else mapX
-                posX = wall_posX+0.1 + 1/(self.measures.irSensor[right_id]) + 0.5    
-
-
-        elif self.measures.irSensor[left_id] > 2:
-            if abs(rotation) < 4:
-                wall_posY = mapY-1 if mapY%2==1 else mapY
-                posY = wall_posY+0.1 + 1/(self.measures.irSensor[left_id]) + 0.5   
-            elif abs(rotation) >= 176:
-                wall_posY = mapY+1 if mapY%2==1 else mapY
-                posY = wall_posY-0.1 - 1/(self.measures.irSensor[left_id]) - 0.5 
-
-            elif rotation > -94 and rotation < -86:
-                wall_posX = mapX+1 if mapX%2==1 else mapX
-                posX = wall_posX-0.1 - 1/(self.measures.irSensor[left_id]) - 0.5   
-            elif rotation > 86 and rotation<94:
-                wall_posX = mapX-1 if mapX%2==1 else mapX
-                posX = wall_posX+0.1 + 1/(self.measures.irSensor[left_id]) + 0.5  
+        #     elif rotation > 86 and rotation<94:
+        #         wall_posX = mapX+1 if mapX%2==1 else mapX
+        #         posX = wall_posX-0.1 - 1/(self.measures.irSensor[right_id]) - 0.5
+        #     elif rotation > -94 and rotation < -86:
+        #         wall_posX = mapX-1 if mapX%2==1 else mapX
+        #         posX = wall_posX+0.1 + 1/(self.measures.irSensor[right_id]) + 0.5    
 
 
-        if self.measures.irSensor[center_id] > 2:
-            if abs(rotation) < 4:
-                wall_posX = mapX+1 if mapX%2==1 else mapX
-                posX = wall_posX-0.1 - 1/(self.measures.irSensor[center_id]) - 0.5   
-            elif abs(rotation) >= 176:
-                wall_posX = mapX-1 if mapX%2==1 else mapX
-                posX = wall_posX+0.1 + 1/(self.measures.irSensor[center_id]) + 0.5  
+        # elif self.measures.irSensor[left_id] > 2:
+        #     if abs(rotation) < 4:
+        #         wall_posY = mapY-1 if mapY%2==1 else mapY
+        #         posY = wall_posY+0.1 + 1/(self.measures.irSensor[left_id]) + 0.5   
+        #     elif abs(rotation) >= 176:
+        #         wall_posY = mapY+1 if mapY%2==1 else mapY
+        #         posY = wall_posY-0.1 - 1/(self.measures.irSensor[left_id]) - 0.5 
 
-            elif rotation > -94 and rotation < -86:
-                wall_posY = mapY+1 if mapY%2==1 else mapY
-                posY = wall_posY-0.1 - 1/(self.measures.irSensor[center_id]) - 0.5 
-            elif rotation > 86 and rotation<94:
-                wall_posY = mapY-1 if mapY%2==1 else mapY
-                posY = wall_posY+0.1 + 1/(self.measures.irSensor[center_id]) + 0.5   
-            
-        mapX = self.customRound(posX)
-        mapY = self.customRound(posY)
-        print("mapX:", mapX)
-        print("mapY: ",mapY)
-        print("posX: ",posX)
-        print("posY: ",posY)
-        print("gpsPosX and Y: ",gpsPosX,gpsPosY)
-        print("walls: ",wall_posX,wall_posY)
+        #     elif rotation > -94 and rotation < -86:
+        #         wall_posX = mapX+1 if mapX%2==1 else mapX
+        #         posX = wall_posX-0.1 - 1/(self.measures.irSensor[left_id]) - 0.5   
+        #     elif rotation > 86 and rotation<94:
+        #         wall_posX = mapX-1 if mapX%2==1 else mapX
+        #         posX = wall_posX+0.1 + 1/(self.measures.irSensor[left_id]) + 0.5  
+
+
+        # if self.measures.irSensor[center_id] > 2:
+        #     if abs(rotation) < 4:
+        #         wall_posX = mapX+1 if mapX%2==1 else mapX
+        #         posX = wall_posX-0.1 - 1/(self.measures.irSensor[center_id]) - 0.5   
+        #     elif abs(rotation) >= 176:
+        #         wall_posX = mapX-1 if mapX%2==1 else mapX
+        #         posX = wall_posX+0.1 + 1/(self.measures.irSensor[center_id]) + 0.5  
+
+        #     elif rotation > -94 and rotation < -86:
+        #         wall_posY = mapY+1 if mapY%2==1 else mapY
+        #         posY = wall_posY-0.1 - 1/(self.measures.irSensor[center_id]) - 0.5 
+        #     elif rotation > 86 and rotation<94:
+        #         wall_posY = mapY-1 if mapY%2==1 else mapY
+        #         posY = wall_posY+0.1 + 1/(self.measures.irSensor[center_id]) + 0.5   
+        
 
 # Map draw -----------------------------------------------------------------------
  
