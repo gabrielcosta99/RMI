@@ -117,63 +117,63 @@ class MyRob(CRobLinkAngs):
         rotAx = self.rotToAxis()
         auxX = nearestOdd(posX)
         auxY = nearestOdd(posY)
-        
+        print("(auxX,auxY): ({},{})",auxX,auxY)
         if self.measures.irSensor[center_id] > 1.5:
             if rotAx == 'E':
-                posX = auxX + 1 + 1/(self.measures.irSensor[center_id]) - 0.6
+                posX = auxX + 1 - 1/(self.measures.irSensor[center_id]) - 0.6
             elif rotAx == 'N':
                 posY = auxY - 1 + 1/(self.measures.irSensor[center_id]) + 0.6
             elif rotAx == 'W':
                 posX = auxX - 1 + 1/(self.measures.irSensor[center_id]) + 0.6
             elif rotAx == 'S':
-                posY = auxY + 1 + 1/(self.measures.irSensor[center_id]) - 0.6
+                posY = auxY + 1 - 1/(self.measures.irSensor[center_id]) - 0.6
                 
             elif rotAx == 'ENE' or rotAx == 'ESE':
-                posX = auxX + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+                posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
             elif rotAx == 'NNE' or rotAx == 'NNW':
                 posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
             elif rotAx == 'WNW' or rotAx == 'WSW':
                 posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
             elif rotAx == 'SNE' or rotAx == 'SNW':
-                posY = auxY + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+                posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
         
-        elif self.measures.irSensor[right_id] > 1.5:
+        if self.measures.irSensor[right_id] > 1.5:
             if rotAx == 'E':
-                posY = auxY + 1 + 1/(self.measures.irSensor[right_id]) - 0.6
+                posY = auxY + 1 - 1/(self.measures.irSensor[right_id]) - 0.6
             elif rotAx == 'N':
-                posX = auxX + 1 + 1/(self.measures.irSensor[right_id]) - 0.6
+                posX = auxX + 1 - 1/(self.measures.irSensor[right_id]) - 0.6
             elif rotAx == 'W':
                 posY = auxY - 1 + 1/(self.measures.irSensor[right_id]) + 0.6
             elif rotAx == 'S':
                 posX = auxX - 1 + 1/(self.measures.irSensor[right_id]) + 0.6
                 
             elif rotAx == 'ENE' or rotAx == 'ESE':
-                posY = auxY + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+                posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) - 0.6
             elif rotAx == 'NNE' or rotAx == 'NNW':
-                posX = auxX + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+                posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) - 0.6
             elif rotAx == 'WNW' or rotAx == 'WSW':
-                posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
+                posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) + 0.6
             elif rotAx == 'SNE' or rotAx == 'SNW':
                 posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) + 0.6
         
         elif self.measures.irSensor[left_id] > 1.5:
             if rotAx == 'E':
-                posX = auxX - 1 + 1/(self.measures.irSensor[right_id]) + 0.6
+                posY = auxY - 1 + 1/(self.measures.irSensor[right_id]) + 0.6
             elif rotAx == 'N':
-                posX = auxX + 1 + 1/(self.measures.irSensor[right_id]) - 0.6
+                posX = auxX - 1 + 1/(self.measures.irSensor[right_id]) + 0.6
             elif rotAx == 'W':
-                posY = auxY + 1 + 1/(self.measures.irSensor[right_id]) - 0.6
+                posY = auxY + 1 - 1/(self.measures.irSensor[right_id]) - 0.6
             elif rotAx == 'S':
-                posX = auxX + 1 + 1/(self.measures.irSensor[right_id]) - 0.6
+                posX = auxX + 1 - 1/(self.measures.irSensor[right_id]) - 0.6
                 
             elif rotAx == 'ENE' or rotAx == 'ESE':
-                posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
+                posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) + 0.6
             elif rotAx == 'NNE' or rotAx == 'NNW':
-                posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) + 0.6
+                posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) + 0.6
             elif rotAx == 'WNW' or rotAx == 'WSW':
-                posY = auxY + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+                posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) - 0.6
             elif rotAx == 'SNE' or rotAx == 'SNW':
-                posX = auxX + 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+                posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) - 0.6
 
     def run(self):
         global initialX, initialY
