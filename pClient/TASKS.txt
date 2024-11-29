@@ -5,7 +5,7 @@
 
 
 
-
+Será que devíamos fazer com que o robo NÃO tente mapear posições que já foram mapeadas?
 
 
 
