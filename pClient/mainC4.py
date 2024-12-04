@@ -318,7 +318,7 @@ class MyRob(CRobLinkAngs):
         downPosNotMapped = drawnMap[mapY+1][mapX] == "0"
         leftPosNotMapped = drawnMap[mapY][mapX-1] == "0"
         rightPosNotMapped = drawnMap[mapY][mapX+1] == "0"
-        if abs(rotation) <=2:
+        if abs(rotation) <=5:
             if mapX % 2 == 1:
                 
                 if self.measures.irSensor[right_id] > 1.5 and downPosNotMapped:
@@ -333,7 +333,7 @@ class MyRob(CRobLinkAngs):
                     # drawnMap[mapY-1][mapX] = '-'
                     self.addToMap(mapY-1,mapX,'-')
                     
-        elif abs(rotation) >= 178:
+        elif abs(rotation) >= 175:
             if mapX % 2 == 1:
                 
 
@@ -349,7 +349,7 @@ class MyRob(CRobLinkAngs):
                     # drawnMap[mapY+1][mapX] = '-'
                     self.addToMap(mapY+1,mapX,'-')
                     
-        elif rotation > 88 and rotation<92:
+        elif rotation > 85 and rotation<95:
             if mapY % 2 == 1:
                 if self.measures.irSensor[right_id] > 1.5 and rightPosNotMapped:
                     # drawnMap[mapY][mapX+1] = '|'
@@ -363,7 +363,7 @@ class MyRob(CRobLinkAngs):
                     # drawnMap[mapY][mapX-1] = '|'
                     self.addToMap(mapY,mapX-1,'|')
                     
-        elif rotation > -92 and rotation < -88:
+        elif rotation > -95 and rotation < -85:
             if mapY % 2 == 1:
                 if self.measures.irSensor[right_id] > 1.5 and leftPosNotMapped:
                     # drawnMap[mapY][mapX-1] = '|'
