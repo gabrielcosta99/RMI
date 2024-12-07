@@ -5,3 +5,16 @@ quando na realidade esta a olhar para a parede da direita.
 O "Keep going forward" devia ter uma range maior, ou seja, existe vezes que o robo vira á direita (por ex.) demasiado cedo
 
 Se pusermos o robo a andar numa linha reta demasiado tempo, o erro acumulado é demasiado grande
+
+
+O "turn around" não é executado pq ele deteta primeiro que todas as posições á volta foram mapeadas, por isso, ele ás vezes
+faz o "keep moving forward" apesar de dever voltar para tras
+
+
+
+No keep moving forward usa só os sensores que estão diretamente á frente do robo e não os que estão nas laterais 
+
+o erro da bussola ta a lixar o ajuste da posição no calculateXandY 
+
+
+poe o "keep moving forward" do searchAlgorithm dentro dos ifs de virar para a esquerda ou direita
