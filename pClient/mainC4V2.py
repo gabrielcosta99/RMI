@@ -494,7 +494,12 @@ class MyRob(CRobLinkAngs):
                 self.writeDrawnMap()
                 path = self.findPath(obj_pos[0],obj_pos[1],obj_pos[2])
                 self.savePath(path)
-                self.finish()
+
+                # self.finish()
+                pathToInitialPos = self.a_star(drawnMap,(mapX,mapY),obj_pos[0])
+                path = pathToInitialPos + path + [-1]
+                search = True
+                
                 return inL,inR
             return inL,inR
         
@@ -570,7 +575,12 @@ class MyRob(CRobLinkAngs):
                     self.printDrawnMap()
                     path = self.findPath(obj_pos[0],obj_pos[1],obj_pos[2])
                     self.savePath(path)
-                    self.finish()                       
+                    # self.finish()
+                    pathToInitialPos = self.a_star(drawnMap,(mapX,mapY),obj_pos[0])
+                    path = pathToInitialPos + path + [-1]
+                    search = True
+                    
+
                     return
             else:
                 print("Go")
@@ -645,7 +655,12 @@ class MyRob(CRobLinkAngs):
                     self.writeDrawnMap()
                     path = self.findPath(obj_pos[0],obj_pos[1],obj_pos[2])
                     self.savePath(path)
-                    self.finish()
+                    # self.finish()
+                    pathToInitialPos = self.a_star(drawnMap,(mapX,mapY),obj_pos[0])
+                    path = pathToInitialPos + path + [-1]
+                    search = True
+                    
+
                     return
             else:
                 print("Go")
@@ -716,6 +731,9 @@ class MyRob(CRobLinkAngs):
             if path == []:
                 search = False
                 print("-----------> SEARCH DONE <-----------------")
+                return inL,inR
+            elif path == [-1]:
+                self.finish()
                 return inL,inR
             if (decimalX<=2 or decimalX>=8) or (decimalY<= 2 or decimalY>=8):
                 print("Keep going forward")
