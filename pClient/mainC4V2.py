@@ -26,14 +26,6 @@ obj_pos = [(27,13)]
 prev_beacons = [300]
 detected = False
 
-# def nearestOdd(num):
-#     rounded = round(num)
-#     if rounded % 2 == 0:
-#         if num > 0:
-#             return rounded + 1
-#         else:
-#             return rounded - 1
-#     return rounded
 def nearestOdd(num):
     rounded = int(num)
     if rounded % 2 == 0:
@@ -108,37 +100,15 @@ class MyRob(CRobLinkAngs):
         posX += lin * cos(rot*pi/180)
         posY -= lin * sin(rot*pi/180)
     
-    # def customRound(self,value):
-    #     decimal = value*10%10 # get the decimal value ex: 28.76 -> decimal = 7
-    #     if decimal >=7:
-    #         return int(value+1)
-    #     return int(value)
-        
     def rotToAxis(self):
-        if abs(self.measures.compass) <= 5:
+        if abs(self.measures.compass) <= 10:
             return 'E'                                   # right
-        elif self.measures.compass >= 85 and  self.measures.compass <= 95:
+        elif self.measures.compass >= 80 and  self.measures.compass <= 100:
             return 'N'                                   # up
-        elif abs(self.measures.compass) >= 175:
+        elif abs(self.measures.compass) >= 170:
             return 'W'                                    # left
-        elif self.measures.compass >= -95 and  self.measures.compass <= -85:
+        elif self.measures.compass >= -100 and  self.measures.compass <= -80:
             return 'S'                                    # down
-        elif self.measures.compass > 5 and self.measures.compass < 45:
-            return 'ENE'                                   # 1st quadrant
-        elif self.measures.compass >= 45 and self.measures.compass < 85:
-            return 'NNE'                                   # 1st quadrant
-        elif self.measures.compass > 95 and self.measures.compass < 135:
-            return 'NNW'                                   # 2nd quadrant
-        elif self.measures.compass >= 135 and self.measures.compass < 175:
-            return 'WNW'                                   # 2nd quadrant
-        elif self.measures.compass > -175 and self.measures.compass <= -135:
-            return 'WSW'                                   # 3rd quadrant
-        elif self.measures.compass > -135 and self.measures.compass < -95:
-            return 'SSW'                                   # 3rd quadrant
-        elif self.measures.compass > -85 and self.measures.compass <= -45:
-            return 'SSE'                                   # 4th quadrant
-        elif self.measures.compass > -45 and self.measures.compass < -5:
-            return 'ESE'                                   # 4th quadrant
         
     def calibratePos(self):
         global posX, posY
@@ -159,14 +129,6 @@ class MyRob(CRobLinkAngs):
             elif rotAx == 'S':
                 posY = auxY + 1 - 1/(self.measures.irSensor[center_id]) - 0.6
                 
-            # elif rotAx == 'ENE' or rotAx == 'ESE':
-            #     posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
-            # elif rotAx == 'NNE' or rotAx == 'NNW':
-            #     posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
-            # elif rotAx == 'WNW' or rotAx == 'WSW':
-            #     posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
-            # elif rotAx == 'SNE' or rotAx == 'SNW':
-            #     posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
         
         if self.measures.irSensor[right_id] > 1.5 and self.measures.irSensor[right_id] > self.measures.irSensor[left_id]:
             if rotAx == 'E':
@@ -178,15 +140,6 @@ class MyRob(CRobLinkAngs):
             elif rotAx == 'S':
                 posX = auxX - 1 + 1/(self.measures.irSensor[right_id]) + 0.6
                 
-            # elif rotAx == 'ENE' or rotAx == 'ESE':
-            #     posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) - 0.6
-            # elif rotAx == 'NNE' or rotAx == 'NNW':
-            #     posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) - 0.6
-            # elif rotAx == 'WNW' or rotAx == 'WSW':
-            #     posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) + 0.6
-            # elif rotAx == 'SNE' or rotAx == 'SNW':
-            #     posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) + 0.6
-        
         elif self.measures.irSensor[left_id] > 1.5:
             if rotAx == 'E':
                 posY = auxY - 1 + 1/(self.measures.irSensor[left_id]) + 0.6
@@ -197,14 +150,6 @@ class MyRob(CRobLinkAngs):
             elif rotAx == 'S':
                 posX = auxX + 1 - 1/(self.measures.irSensor[left_id]) - 0.6
                 
-            # elif rotAx == 'ENE' or rotAx == 'ESE':
-            #     posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) + 0.6
-            # elif rotAx == 'NNE' or rotAx == 'NNW':
-            #     posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) + 0.6
-            # elif rotAx == 'WNW' or rotAx == 'WSW':
-            #     posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) - 0.6
-            # elif rotAx == 'SNE' or rotAx == 'SNW':
-            #     posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) - 0.6
 
     def run(self):
         global initialX, initialY, prev_beacons, obj_pos
@@ -360,18 +305,6 @@ class MyRob(CRobLinkAngs):
                     # drawnMap[mapY][mapX+1] = '|'
                     self.addToMap(mapY,mapX+1,'|')
 
-        # if drawnMap[mapY+1][mapX] == "0" and (mapX,mapY+1) not in positions_to_visit:
-        #     pos = (mapX,mapY+1)
-        #     positions_to_visit.append(pos)
-        # if drawnMap[mapY-1][mapX] == "0" and (mapX,mapY-1) not in positions_to_visit:
-        #     pos = (mapX,mapY-1)
-        #     positions_to_visit.append(pos)
-        # if drawnMap[mapY][mapX+1] == "0" and (mapX+1,mapY) not in positions_to_visit:
-        #     pos = (mapX+1,mapY)
-        #     positions_to_visit.append(pos)
-        # if drawnMap[mapY][mapX-1] == "0" and (mapX-1,mapY) not in positions_to_visit:
-        #     pos = (mapX-1,mapY)
-        #     positions_to_visit.append(pos)
         if drawnMap[mapY][mapX+1] == "0" and (mapX+1,mapY) not in positions_to_visit:
             pos = (mapX+1,mapY)
             positions_to_visit.append(pos)
@@ -391,10 +324,12 @@ class MyRob(CRobLinkAngs):
             
 # Objective detection -----------------------------------------------------------------------------
 
-        if (self.measures.ground == 1  or self.measures.ground == 2) and prev_beacons != [300,300,300]:
+        if (self.measures.ground >= 1  and self.measures.ground <= len(self.measures.beacon)) and prev_beacons != ([300] * len(self.measures.beacon)):
             obj_pos[self.measures.ground] = (mapX,mapY)
+            if mapX % 2 == 1 and mapY % 2 == 1:
+                self.addToMap(mapY,mapX,str(self.measures.ground))
             prev_beacons[self.measures.ground] = 300
-            if prev_beacons == [300,300,300]:
+            if prev_beacons == ([300] * len(self.measures.beacon)):
                 detected = True
             
 
