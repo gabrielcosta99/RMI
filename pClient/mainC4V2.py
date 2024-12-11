@@ -22,8 +22,8 @@ search = False
 e_m1, e_m2, u_m1 = 0,0,0
 path = []
 
-obj_pos = [(27,13),(0,0),(0,0)]
-prev_beacons = [300,200,200]
+obj_pos = [(27,13)]
+prev_beacons = [300]
 detected = False
 
 # def nearestOdd(num):
@@ -207,7 +207,7 @@ class MyRob(CRobLinkAngs):
             #     posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) - 0.6
 
     def run(self):
-        global initialX, initialY
+        global initialX, initialY, prev_beacons, obj_pos
         if self.status != 0:
             print("Connection refused or error")
             quit()
@@ -218,6 +218,8 @@ class MyRob(CRobLinkAngs):
         self.readSensors()
         initialX = self.measures.x - 27.0
         initialY = self.measures.y - 13.0
+        prev_beacons += (len(self.measures.beacon)-1) * [200]
+        obj_pos += [(0,0)] * (len(self.measures.beacon)-1)
         while True:
             self.readSensors()
 
