@@ -17,4 +17,10 @@ No keep moving forward usa só os sensores que estão diretamente á frente do r
 o erro da bussola ta a lixar o ajuste da posição no calculateXandY 
 
 
-poe o "keep moving forward" do searchAlgorithm dentro dos ifs de virar para a esquerda ou direita
+poe o "keep moving forward" do searchAlgorithm dentro dos ifs de virar para a esquerda ou direita 
+mas so podes fazer isso se garantires que ele ja ta mais ou menos virado nessa direçao, pq pode acontecer 
+que ele vai para o modo search quando a posição que ele quer chegar é atras dele, e ele vai andar para a frente
+
+O "calibratePos" ás vezes dá a posição errada, no entanto as contas estão corretas
+
+
