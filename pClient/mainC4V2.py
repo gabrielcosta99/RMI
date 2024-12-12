@@ -151,60 +151,60 @@ class MyRob(CRobLinkAngs):
         print("(auxX,auxY,rotAx): ({},{},{})".format(auxX,auxY,rotAx))
         if self.measures.irSensor[center_id] > 1.5:
             if rotAx == 'E':
-                posX = auxX + 1 - 1/(self.measures.irSensor[center_id]) - 0.6
+                posX = auxX + 1 - 1/(self.measures.irSensor[center_id]) - 0.5
             elif rotAx == 'N':
-                posY = auxY - 1 + 1/(self.measures.irSensor[center_id]) + 0.6
+                posY = auxY - 1 + 1/(self.measures.irSensor[center_id]) + 0.5
             elif rotAx == 'W':
-                posX = auxX - 1 + 1/(self.measures.irSensor[center_id]) + 0.6
+                posX = auxX - 1 + 1/(self.measures.irSensor[center_id]) + 0.5
             elif rotAx == 'S':
-                posY = auxY + 1 - 1/(self.measures.irSensor[center_id]) - 0.6
+                posY = auxY + 1 - 1/(self.measures.irSensor[center_id]) - 0.5
                 
             # elif rotAx == 'ENE' or rotAx == 'ESE':
-            #     posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+            #     posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.5
             # elif rotAx == 'NNE' or rotAx == 'NNW':
-            #     posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
+            #     posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.5
             # elif rotAx == 'WNW' or rotAx == 'WSW':
-            #     posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.6
+            #     posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) + 0.5
             # elif rotAx == 'SNE' or rotAx == 'SNW':
-            #     posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.6
+            #     posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[center_id])) - 0.5
         
         if self.measures.irSensor[right_id] > 1.5 and self.measures.irSensor[right_id] > self.measures.irSensor[left_id]:
             if rotAx == 'E':
-                posY = auxY + 1 - 1/(self.measures.irSensor[right_id]) - 0.6
+                posY = auxY + 1 - 1/(self.measures.irSensor[right_id]) - 0.5
             elif rotAx == 'N':
-                posX = auxX + 1 - 1/(self.measures.irSensor[right_id]) - 0.6
+                posX = auxX + 1 - 1/(self.measures.irSensor[right_id]) - 0.5
             elif rotAx == 'W':
-                posY = auxY - 1 + 1/(self.measures.irSensor[right_id]) + 0.6
+                posY = auxY - 1 + 1/(self.measures.irSensor[right_id]) + 0.5
             elif rotAx == 'S':
-                posX = auxX - 1 + 1/(self.measures.irSensor[right_id]) + 0.6
+                posX = auxX - 1 + 1/(self.measures.irSensor[right_id]) + 0.5
                 
             # elif rotAx == 'ENE' or rotAx == 'ESE':
-            #     posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) - 0.6
+            #     posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) - 0.5
             # elif rotAx == 'NNE' or rotAx == 'NNW':
-            #     posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) - 0.6
+            #     posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) - 0.5
             # elif rotAx == 'WNW' or rotAx == 'WSW':
-            #     posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) + 0.6
+            #     posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) + 0.5
             # elif rotAx == 'SNE' or rotAx == 'SNW':
-            #     posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) + 0.6
+            #     posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[right_id])) + 0.5
         
         elif self.measures.irSensor[left_id] > 1.5:
             if rotAx == 'E':
-                posY = auxY - 1 + 1/(self.measures.irSensor[left_id]) + 0.6
+                posY = auxY - 1 + 1/(self.measures.irSensor[left_id]) + 0.5
             elif rotAx == 'N':
-                posX = auxX - 1 + 1/(self.measures.irSensor[left_id]) + 0.6
+                posX = auxX - 1 + 1/(self.measures.irSensor[left_id]) + 0.5
             elif rotAx == 'W':
-                posY = auxY + 1 - 1/(self.measures.irSensor[left_id]) - 0.6
+                posY = auxY + 1 - 1/(self.measures.irSensor[left_id]) - 0.5
             elif rotAx == 'S':
-                posX = auxX + 1 - 1/(self.measures.irSensor[left_id]) - 0.6
+                posX = auxX + 1 - 1/(self.measures.irSensor[left_id]) - 0.5
                 
             # elif rotAx == 'ENE' or rotAx == 'ESE':
-            #     posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) + 0.6
+            #     posY = auxY - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) + 0.5
             # elif rotAx == 'NNE' or rotAx == 'NNW':
-            #     posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) + 0.6
+            #     posX = auxX - 1 + cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) + 0.5
             # elif rotAx == 'WNW' or rotAx == 'WSW':
-            #     posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) - 0.6
+            #     posY = auxY + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) - 0.5
             # elif rotAx == 'SNE' or rotAx == 'SNW':
-            #     posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) - 0.6
+            #     posX = auxX + 1 - cos(math.radians(self.measures.compass)) * (1/(self.measures.irSensor[left_id])) - 0.5
 
     def run(self):
         global initialX, initialY
@@ -273,7 +273,6 @@ class MyRob(CRobLinkAngs):
         print("right: ",self.measures.irSensor[right_id])
         # print("back: ",self.measures.irSensor[back_id])
         print("compass: ",self.measures.compass)
-        print("toRotate: ",toRotate)
         print("beacon:", self.measures.beacon)
         print("objectives:", obj_pos)
 
@@ -300,7 +299,7 @@ class MyRob(CRobLinkAngs):
         decimalX = round(posX*10)%10
         decimalY = round(posY*10)%10
         if abs(rotation) <=5:
-            if mapX % 2 == 1 and (decimalX >= 8 or decimalX <=2):  # only count as an odd number if the number is between .7 and .3
+            if mapX % 2 == 1 and (decimalX >= 8 or decimalX <=2):  # only count as an odd number if the number is between .8 and .3
                 
                 if self.measures.irSensor[right_id] > 1.7 and downPosNotMapped:
                     # drawnMap[mapY+1][mapX] = '-'
@@ -315,7 +314,7 @@ class MyRob(CRobLinkAngs):
                     self.addToMap(mapY-1,mapX,'-')
                     
         elif abs(rotation) >= 175:
-            if mapX % 2 == 1 and (decimalX >= 8 or decimalX <=2): # only count as an odd number if the number is between .7 and .3
+            if mapX % 2 == 1 and (decimalX >= 8 or decimalX <=2): # only count as an odd number if the number is between .8 and .3
                 
 
                 if self.measures.irSensor[right_id] > 1.7 and upPosNotMapped:
@@ -397,13 +396,22 @@ class MyRob(CRobLinkAngs):
             
 
 # Movement decision -------------------------------------------------------------------------------
+        if toRotate != 0 and abs(toRotate) <0.3:
+            target_compass = nearest_multiple_of_90(self.measures.compass)
+            print("target_compass: ",target_compass)
+            if (abs(target_compass- (360-self.measures.compass)) > 3 and abs(self.measures.compass) >= 177) \
+            or (abs(target_compass-self.measures.compass) > 3 and abs(self.measures.compass) < 177):
+                toRotate = math.radians(target_compass-self.measures.compass)
+            else:
+                toRotate = 0
+            print("toRotate: ",toRotate)
         if toRotate > 0:
             if toRotate<0.3:
                 # u = toRotate/4
                 # self.driveMotors(-u,u)
                 inL = -toRotate/2
                 inR = toRotate/2
-                toRotate=0
+                # toRotate=0
                 self.driveMotors(inL,inR)
             else:
                 # toRotate -=0.3
@@ -420,7 +428,8 @@ class MyRob(CRobLinkAngs):
                 inL = -toRotate/2
                 inR = toRotate/2
                 self.driveMotors(inL,inR)
-                toRotate=0
+                # toRotate=0
+               
             else:
                 # toRotate +=0.3
                 inL = 0.15
@@ -511,7 +520,7 @@ class MyRob(CRobLinkAngs):
             #     self.driveMotors(0.1,0.1)
             # else:   # We are at the center of the cell, we may go to the right
             
-            if self.measures.irSensor[right_id] < 1.2\
+            if self.measures.irSensor[right_id] < 1.5\
             and ((abs(self.measures.compass) < 60 and drawnMap[mapY+1][mapX] == '0') \
             or (abs(self.measures.compass)>120 and drawnMap[mapY-1][mapX] == '0')):
                 if ((mapX)%2==0 or (mapX%2==1 and (decimalX<=8 and decimalX >=2))) and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
@@ -526,7 +535,7 @@ class MyRob(CRobLinkAngs):
                     angleObjective = nearest_multiple_of_90(self.measures.compass-90)
                     toRotate = angleObjective*pi/180 - self.measures.compass*pi/180
             # if there is an open space to the left that we havent visited and we have already visited the front cell, turn left
-            elif self.measures.irSensor[left_id] <1.0 \
+            elif self.measures.irSensor[left_id] <1.5 \
                 and (((abs(self.measures.compass) < 60 and drawnMap[mapY][mapX+1] != '0') \
                 and (abs(self.measures.compass) < 60 and drawnMap[mapY-1][mapX] == '0')) \
                 or ((abs(self.measures.compass) > 120 and drawnMap[mapY][mapX-1] != '0' ) \
@@ -543,13 +552,13 @@ class MyRob(CRobLinkAngs):
                     angleObjective = nearest_multiple_of_90(self.measures.compass+90)
                     toRotate = angleObjective*pi/180 - self.measures.compass*pi/180
                 
-            elif (self.measures.compass>5 and self.measures.compass <55) or (self.measures.compass>-175 and self.measures.compass<-125):
+            elif (self.measures.compass>3 and self.measures.compass <57) or (self.measures.compass>-177 and self.measures.compass<-123):
                 print("Rotate slightly right")
                 if self.measures.compass > 0:
                     toRotate = (0-self.measures.compass)*pi/180
                 else:
                     toRotate = (-180-self.measures.compass)*pi/180
-            elif (self.measures.compass<175 and self.measures.compass >125) or (self.measures.compass>-55 and self.measures.compass<-5):
+            elif (self.measures.compass<177 and self.measures.compass >123) or (self.measures.compass>-57 and self.measures.compass<-3):
                 print("Rotate slightly left")
                 if self.measures.compass > 0:
                     toRotate = (180 - self.measures.compass)*pi/180
@@ -591,7 +600,7 @@ class MyRob(CRobLinkAngs):
             #     print("Keep going forward")
             #     self.driveMotors(0.1,0.1)
             # else:
-            if self.measures.irSensor[right_id] < 1.2 \
+            if self.measures.irSensor[right_id] < 1.5 \
             and ((self.measures.compass > 0 and drawnMap[mapY][mapX+1] == '0') \
             or (self.measures.compass<0 and drawnMap[mapY][mapX-1] == '0')):
                 if ((mapY)%2 == 0 or (mapY%2==1 and (decimalY<=8 and decimalY >=2))) and self.measures.irSensor[center_id]<4.0:
@@ -605,7 +614,7 @@ class MyRob(CRobLinkAngs):
                     # toRotate = -pi/2
                     angleObjective = nearest_multiple_of_90(self.measures.compass-90)
                     toRotate = angleObjective*pi/180 - self.measures.compass*pi/180
-            elif self.measures.irSensor[left_id] <1.0\
+            elif self.measures.irSensor[left_id] <1.5\
             and (((self.measures.compass > 0 and drawnMap[mapY-1][mapX] != '0') \
             and (self.measures.compass > 0 and drawnMap[mapY][mapX-1] == '0')) \
             or ((self.measures.compass < 0 and drawnMap[mapY+1][mapX] != '0') \
@@ -621,19 +630,19 @@ class MyRob(CRobLinkAngs):
                     # toRotate = pi/2
                     angleObjective = nearest_multiple_of_90(self.measures.compass+90)
                     toRotate = angleObjective*pi/180 - self.measures.compass*pi/180
-            elif (self.measures.compass>95 and self.measures.compass <115) or (self.measures.compass>-85 and self.measures.compass<-65):
+            elif (self.measures.compass>93 and self.measures.compass <117) or (self.measures.compass>-87 and self.measures.compass<-63):
                 print("Rotate slightly right")
                 if self.measures.compass > 0:
                     toRotate = (90-self.measures.compass)*pi/180
                 else:
                     toRotate = (-90-self.measures.compass)*pi/180
-            elif (self.measures.compass<85 and self.measures.compass >65) or (self.measures.compass>-115 and self.measures.compass<-95):
+            elif (self.measures.compass<87 and self.measures.compass >63) or (self.measures.compass>-117 and self.measures.compass<-93):
                 print("Rotate slightly left")
                 if self.measures.compass > 0:
                     toRotate = (90-self.measures.compass)*pi/180
                 else:
                     toRotate = (-90-self.measures.compass)*pi/180
-            elif self.measures.irSensor[center_id] > 1.7 and self.measures.irSensor[left_id] >1.7 and self.measures.irSensor[right_id]>1.7:
+            elif (self.measures.irSensor[center_id] > 1.7 and self.measures.irSensor[left_id] >1.7 and self.measures.irSensor[right_id]>1.7):
                 print('------> TURN AROUND <-------- ')
                 inL,inR = 0.0,0.0
                 self.driveMotors(inL,inR)

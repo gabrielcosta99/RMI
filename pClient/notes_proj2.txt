@@ -11,16 +11,14 @@ O "turn around" não é executado pq ele deteta primeiro que todas as posições
 faz o "keep moving forward" apesar de dever voltar para tras
 
 
-
-No keep moving forward usa só os sensores que estão diretamente á frente do robo e não os que estão nas laterais 
-
 o erro da bussola ta a lixar o ajuste da posição no calculateXandY 
 
-
-poe o "keep moving forward" do searchAlgorithm dentro dos ifs de virar para a esquerda ou direita 
-mas so podes fazer isso se garantires que ele ja ta mais ou menos virado nessa direçao, pq pode acontecer 
-que ele vai para o modo search quando a posição que ele quer chegar é atras dele, e ele vai andar para a frente
 
 O "calibratePos" ás vezes dá a posição errada, no entanto as contas estão corretas
 
 
+Por causa do erro no movimento das rodas, o angulo da direçao muda quando n devia e por isso o robo vai contra a parede 
+ás vezes
+
+GUARDAR O ULTIMO ANGULO PARA QUE NA PROXIMA POSIÇAO, SE O ANGULO NAO SE MANTER IGUAL, AJUSTAMOS A VELOCIDADE DE UMA DAS RODAS PARA 
+QUE ELE SE MANTENHA NO MESMO PERCURSO
