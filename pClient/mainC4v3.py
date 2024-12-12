@@ -797,6 +797,7 @@ class MyRob(CRobLinkAngs):
         for i in path:
             if i[0]%2 == 1 and i[1]%2 == 1:
                 pathOut.write(f"{i[0]-27} {13-i[1]}\n")
+        pathOut.write("0 0\n")
         pathOut.close()
         
     def shortestPath(self):
@@ -810,8 +811,8 @@ class MyRob(CRobLinkAngs):
         for order in orders:
             auxPath = []
             auxOrder = list(order)
-            auxOrder.append(order[0])  # Create closed path
-            print(order)
+            auxOrder.append((27,13))  # Create closed path
+            
             print("Beacon Order {}".format(order))
             for i in range(len(auxOrder) - 1):
                 # print(auxOrder[i])
@@ -825,7 +826,7 @@ class MyRob(CRobLinkAngs):
             if pathLength < shortLength:
                 shortLength = pathLength
                 shortPath = auxPath
-                shortOrder = order  
+                shortOrder = auxOrder  
 
 
         print("Shortest path with known map {} with len {} and permutation {}".format(shortPath, shortLength, shortOrder))
