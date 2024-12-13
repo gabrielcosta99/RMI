@@ -64,6 +64,11 @@ class MyRob(CRobLinkAngs):
         for i in range(1,27,2):
             self.drawnMap[i] = ['0'] * 55
         self.drawnMap[13][27] = 'I'
+
+        #variables to adjust the wheels speed if in the last iteration, the robot moved a bit to the left or to the right
+        self.oldCompass = 200
+        self.offsetLeft = 0
+        self.offsetRight = 0
         
     # In this map the center of cell (i,j), (i in 0..6, j in 0..13) is mapped to labMap[i*2][j*2].
     # to know if there is a wall on top of cell(i,j) (i in 0..5), check if the value of labMap[i*2+1][j*2] is space or not
@@ -379,6 +384,22 @@ class MyRob(CRobLinkAngs):
                 self.calculateOut(inL,inR)
                 toRotate -= (outR-outL) 
         else:
+            self.offsetLeft = 0
+            self.offsetRight = 0
+            if self.oldCompass < 200:
+                self.oldCompass = 360+self.oldCompass if self.oldCompass < 0 and abs(self.oldCompass)>170 else self.oldCompass
+                compass =  360+self.measures.compass if self.measures.compass <0 and abs(self.oldCompass)>170 else self.measures.compass
+                compassDiff = compass - self.oldCompass
+                if abs(compassDiff) > 4:
+                    if compassDiff > 0:
+                        self.offsetLeft = math.radians(compassDiff)/2
+                    else:
+                        self.offsetRight = math.radians(compassDiff)/2
+                print("adjustment offsets: ",self.offsetLeft,self.offsetRight)
+                self.oldCompass = 300
+            elif self.oldCompass == 300:
+                self.oldCompass = 200
+
             if search:
                 # print("positions_to_visit: ",positions_to_visit)
                 inL,inR = self.searchAlgorithm(mapX,mapY)
@@ -529,7 +550,8 @@ class MyRob(CRobLinkAngs):
                     return
             else:
                 print("Go")
-                inL,inR = 0.15,0.15
+                inL,inR = 0.15-self.offsetLeft,0.15-self.offsetRight
+                self.oldCompass = self.measures.compass
                 # self.driveMotors(inL,inR)
         else:
             # if (mapY)%2 == 0 and self.measures.irSensor[left_id]<4.0 and self.measures.irSensor[right_id]<4.0 and self.measures.irSensor[center_id]<4.0:
@@ -606,7 +628,7 @@ class MyRob(CRobLinkAngs):
                     return
             else:
                 print("Go")
-                inL,inR = 0.15,0.15
+                inL,inR = 0.15-self.offsetLeft,0.15-self.offsetRight
                 # self.driveMotors(inL,inR)
 
         self.driveMotors(inL,inR)
@@ -704,7 +726,8 @@ class MyRob(CRobLinkAngs):
                         toRotate = (0-self.measures.compass)*pi/180
                 else:
                     print("Go")
-                    inL,inR = 0.15,0.15
+                    inL,inR = 0.15-self.offsetLeft,0.15-self.offsetRight
+                    self.oldCompass = self.measures.compass
                     # self.driveMotors(inL,inR)
 
             else: # if we have to move to the left
@@ -725,7 +748,8 @@ class MyRob(CRobLinkAngs):
                             toRotate = (-180-self.measures.compass)*pi/180
                 else:
                     print("Go")
-                    inL,inR = 0.15,0.15
+                    inL,inR = 0.15-self.offsetLeft,0.15-self.offsetRight
+                    self.oldCompass = self.measures.compass
                     # self.driveMotors(inL,inR)
         
         else:
@@ -745,7 +769,8 @@ class MyRob(CRobLinkAngs):
                         toRotate = (-90-self.measures.compass)*pi/180
                 else:
                     print("Go")
-                    inL,inR = 0.15,0.15
+                    inL,inR = 0.15-self.offsetLeft,0.15-self.offsetRight
+                    self.oldCompass = self.measures.compass
                     # self.driveMotors(inL,inR)
             else: # if we have to go up
                 if self.measures.compass<85 or self.measures.compass>95:
@@ -759,7 +784,8 @@ class MyRob(CRobLinkAngs):
                         toRotate = (90-self.measures.compass)*pi/180
                 else:
                     print("Go")
-                    inL,inR = 0.15,0.15
+                    inL,inR = 0.15-self.offsetLeft,0.15-self.offsetRight
+                    self.oldCompass = self.measures.compass
                     # self.driveMotors(inL,inR)
         
         self.driveMotors(inL,inR)
@@ -774,10 +800,10 @@ class MyRob(CRobLinkAngs):
             print("".join(i[:55]).replace('0',' '))
     
     def writeDrawnMap(self):
-        mapFile = open("output.map", "w")
+        mapFile = open(f"{outfile}.map", "w")
         mapFile.write("")
         mapFile.close()
-        mapOut = open("output.map", "a")
+        mapOut = open(f"{outfile}.map", "a")
         for i in self.drawnMap:
             mapOut.write("".join(i[:55]).replace('0',' '))
             mapOut.write('\n')
@@ -796,10 +822,10 @@ class MyRob(CRobLinkAngs):
         return path
         
     def savePath(self, path):
-        pathFile = open("output.path", "w")
+        pathFile = open(f"{outfile}.path", "w")
         pathFile.write("")
         pathFile.close()
-        pathOut = open("output.path", "a")
+        pathOut = open(f"{outfile}.path", "a")
         for i in path:
             if i[0]%2 == 1 and i[1]%2 == 1:
                 pathOut.write(f"{i[0]-27} {13-i[1]}\n")
@@ -871,7 +897,7 @@ class Map():
 rob_name = "pClient2"
 host = "localhost"
 pos = 1
-mapc = None
+outfile = "solution"
 
 for i in range(1, len(sys.argv),2):
     if (sys.argv[i] == "--host" or sys.argv[i] == "-h") and i != len(sys.argv) - 1:
@@ -880,16 +906,16 @@ for i in range(1, len(sys.argv),2):
         pos = int(sys.argv[i + 1])
     elif (sys.argv[i] == "--robname" or sys.argv[i] == "-r") and i != len(sys.argv) - 1:
         rob_name = sys.argv[i + 1]
-    elif (sys.argv[i] == "--map" or sys.argv[i] == "-m") and i != len(sys.argv) - 1:
-        mapc = Map(sys.argv[i + 1])
+    elif (sys.argv[i] == "--outfile" or sys.argv[i] == "-f") and i != len(sys.argv) - 1:
+        outfile = sys.argv[i + 1]
     else:
         print("Unkown argument", sys.argv[i])
         quit()
 
 if __name__ == '__main__':
     rob=MyRob(rob_name,pos,[0.0,90.0,-90.0,180.0],host)
-    if mapc != None:
-        rob.setMap(mapc.labMap)
-        rob.printMap()
+    # if mapc != None:
+    #     rob.setMap(mapc.labMap)
+    #     rob.printMap()
 
     rob.run()

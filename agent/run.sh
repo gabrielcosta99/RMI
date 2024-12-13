@@ -1,6 +1,6 @@
 #!/bin/bash
 
-challenge="1"
+challenge="4"
 host="localhost"
 robname="theAgent"
 pos="0"
@@ -32,19 +32,8 @@ done
 
 shift $(($OPTIND-1))
 
-case $challenge in
-    1)
-        # how to call agent for challenge 1
-        # activate virtual environment, if needed
-        python3 mainC1.py -h "$host" -p "$pos" -r "$robname"
-        ;;
-    2)
-        # how to call agent for challenge 2
-        python3 mainC2.py -h "$host" -p "$pos" -r "$robname"
-        ;;
-    3)
-        # how to call agent for challenge 3
-        python3 mainC3.py -h "$host" -p "$pos" -r "$robname"
-        ;;
-esac
-
+if [ "$challenge" -eq "4" ]; then
+    python3 mainC4V2.py -h "$host" -p "$pos" -r "$robname" -f "$outfile"
+else
+    echo "Unsupported challenge: $challenge"
+fi
