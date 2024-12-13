@@ -445,7 +445,7 @@ class MyRob(CRobLinkAngs):
                 self.savePath(path)
 
                 # self.finish()
-                path = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0]) + [-1]
+                path = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0]) + [(27,13),-1]
                 search = True
                 
                 return inL,inR
@@ -524,7 +524,7 @@ class MyRob(CRobLinkAngs):
                     path = self.shortestPath()
                     self.savePath(path)
                     # self.finish()
-                    path = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0]) + [-1]
+                    path = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0]) + [(27,13),-1]
                     search = True
                     return
             else:
@@ -601,7 +601,7 @@ class MyRob(CRobLinkAngs):
                     path = self.shortestPath()
                     self.savePath(path)
                     # self.finish()
-                    path = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0]) + [-1]
+                    path = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0]) + [(27,13),-1]
                     search = True
                     return
             else:
