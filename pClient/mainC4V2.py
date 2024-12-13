@@ -445,8 +445,7 @@ class MyRob(CRobLinkAngs):
                 self.savePath(path)
 
                 # self.finish()
-                pathToInitialPos = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0])
-                path = pathToInitialPos + path + [-1]
+                path = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0]) + [-1]
                 search = True
                 
                 return inL,inR
@@ -525,11 +524,8 @@ class MyRob(CRobLinkAngs):
                     path = self.shortestPath()
                     self.savePath(path)
                     # self.finish()
-                    pathToInitialPos = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0])
-                    path = pathToInitialPos + path + [-1]
+                    path = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0]) + [-1]
                     search = True
-                    
-
                     return
             else:
                 print("Go")
@@ -605,11 +601,8 @@ class MyRob(CRobLinkAngs):
                     path = self.shortestPath()
                     self.savePath(path)
                     # self.finish()
-                    pathToInitialPos = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0])
-                    path = pathToInitialPos + path + [-1]
+                    path = self.a_star(self.drawnMap,(mapX,mapY),obj_pos[0]) + [-1]
                     search = True
-                    
-
                     return
             else:
                 print("Go")
