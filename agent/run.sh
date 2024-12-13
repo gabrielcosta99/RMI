@@ -33,7 +33,7 @@ done
 shift $(($OPTIND-1))
 
 if [ "$challenge" -eq "4" ]; then
-    python3 mainC4V2.py -h "$host" -p "$pos" -r "$robname" -f "$outfile"
+    python3 mainC4V3.py -h "$host" -p "$pos" -r "$robname" -f "$outfile"
 else
     echo "Unsupported challenge: $challenge"
 fi

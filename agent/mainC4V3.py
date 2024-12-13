@@ -344,8 +344,8 @@ class MyRob(CRobLinkAngs):
         if toRotate != 0 and abs(toRotate) <0.3:
             target_compass = nearest_multiple_of_90(self.measures.compass)
             print("target_compass: ",target_compass)
-            if (abs(target_compass- (360-self.measures.compass)) > 3 and abs(self.measures.compass) >= 177) \
-            or (abs(target_compass-self.measures.compass) > 3 and abs(self.measures.compass) < 177):
+            if (abs(target_compass- (360-self.measures.compass)) > 3 and abs(self.measures.compass) >= 170) \
+            or (abs(target_compass-self.measures.compass) > 3 and abs(self.measures.compass) < 170):
                 toRotate = math.radians(target_compass-self.measures.compass)
             else:
                 toRotate = 0
@@ -386,19 +386,26 @@ class MyRob(CRobLinkAngs):
         else:
             self.offsetLeft = 0
             self.offsetRight = 0
-            if self.oldCompass < 200:
-                self.oldCompass = 360+self.oldCompass if self.oldCompass < 0 and abs(self.oldCompass)>170 else self.oldCompass
-                compass =  360+self.measures.compass if self.measures.compass <0 and abs(self.oldCompass)>170 else self.measures.compass
-                compassDiff = compass - self.oldCompass
-                if abs(compassDiff) > 4:
-                    if compassDiff > 0:
-                        self.offsetLeft = math.radians(compassDiff)/2
-                    else:
-                        self.offsetRight = math.radians(compassDiff)/2
-                print("adjustment offsets: ",self.offsetLeft,self.offsetRight)
-                self.oldCompass = 300
-            elif self.oldCompass == 300:
+            # if self.oldCompass < 200:
+            #     self.oldCompass = 360+self.oldCompass if self.oldCompass < 0 and abs(self.oldCompass)>170 else self.oldCompass
+            #     compass =  360+self.measures.compass if self.measures.compass <0 and abs(self.oldCompass)>170 else self.measures.compass
+            #     compassDiff = compass - self.oldCompass
+            #     if abs(compassDiff) > 4:
+            #         if compassDiff > 0:
+            #             self.offsetLeft = math.radians(compassDiff)/2
+            #         else:
+            #             self.offsetRight = math.radians(compassDiff)/2
+            #     print("adjustment offsets: ",self.offsetLeft,self.offsetRight)
+            #     self.oldCompass = 300
+            # elif self.oldCompass == 300:
+            #     self.oldCompass = 200
+            if self.oldCompass <200:
+                if self.measures.irSensor[left_id] > 3.0: 
+                    self.offsetRight = 0.03
+                elif self.measures.irSensor[right_id] > 3.0:
+                    self.offsetLeft = 0.03
                 self.oldCompass = 200
+                print("adjustment offsets: ",self.offsetLeft,self.offsetRight)
 
             if search:
                 # print("positions_to_visit: ",positions_to_visit)
