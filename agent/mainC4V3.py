@@ -60,9 +60,9 @@ def redirect(mapX,mapY,path,compass):
 class MyRob(CRobLinkAngs):
     def __init__(self, rob_name, rob_id, angles, host):
         CRobLinkAngs.__init__(self, rob_name, rob_id, angles, host)
-        self.drawnMap = [[' ', '9'] * 28 for _ in range(27)]  # Correct initialization
+        self.drawnMap = [[' ', 'O'] * 28 for _ in range(27)]  # Correct initialization
         for i in range(1,27,2):
-            self.drawnMap[i] = ['9'] * 55
+            self.drawnMap[i] = ['O'] * 55
         self.drawnMap[13][27] = '0'
 
         #variables to adjust the wheels speed if in the last iteration, the robot moved a bit to the left or to the right
@@ -240,15 +240,15 @@ class MyRob(CRobLinkAngs):
         # print("diff between gps and pos: ",gpsPosX-posX,gpsPosY-posY)
         # print("marked positions: ",positions_to_visit)
 
-        if self.drawnMap[mapY][mapX] =='9' and (mapY % 2 == 1 or mapX % 2 == 1):
+        if self.drawnMap[mapY][mapX] == 'O' and (mapY % 2 == 1 or mapX % 2 == 1):
             self.drawnMap[mapY][mapX] = 'X'
             # print(self.drawnMap[mapY][mapX])
 
 # Map draw -----------------------------------------------------------------------
-        upPosNotMapped = self.drawnMap[mapY-1][mapX] == "9"
-        downPosNotMapped = self.drawnMap[mapY+1][mapX] == "9"
-        leftPosNotMapped = self.drawnMap[mapY][mapX-1] == "9"
-        rightPosNotMapped = self.drawnMap[mapY][mapX+1] == "9"
+        upPosNotMapped = self.drawnMap[mapY-1][mapX] == "O"
+        downPosNotMapped = self.drawnMap[mapY+1][mapX] == "O"
+        leftPosNotMapped = self.drawnMap[mapY][mapX-1] == "O"
+        rightPosNotMapped = self.drawnMap[mapY][mapX+1] == "O"
         decimalX = round(posX*10)%10
         decimalY = round(posY*10)%10
         if abs(rotation) <=5:
@@ -310,16 +310,16 @@ class MyRob(CRobLinkAngs):
                     # self.drawnMap[mapY][mapX+1] = '|'
                     self.addToMap(mapY,mapX+1,'|')
 
-        if self.drawnMap[mapY][mapX+1] == "9" and (mapX+1,mapY) not in positions_to_visit:
+        if self.drawnMap[mapY][mapX+1] == "O" and (mapX+1,mapY) not in positions_to_visit:
             pos = (mapX+1,mapY)
             positions_to_visit.append(pos)
-        if self.drawnMap[mapY][mapX-1] == "9" and (mapX-1,mapY) not in positions_to_visit:
+        if self.drawnMap[mapY][mapX-1] == "O" and (mapX-1,mapY) not in positions_to_visit:
             pos = (mapX-1,mapY)
             positions_to_visit.append(pos)
-        if self.drawnMap[mapY+1][mapX] == "9" and (mapX,mapY+1) not in positions_to_visit:
+        if self.drawnMap[mapY+1][mapX] == "O" and (mapX,mapY+1) not in positions_to_visit:
             pos = (mapX,mapY+1)
             positions_to_visit.append(pos)
-        if self.drawnMap[mapY-1][mapX] == "9" and (mapX,mapY-1) not in positions_to_visit:
+        if self.drawnMap[mapY-1][mapX] == "O" and (mapX,mapY-1) not in positions_to_visit:
             pos = (mapX,mapY-1)
             positions_to_visit.append(pos)
 
@@ -331,6 +331,7 @@ class MyRob(CRobLinkAngs):
 
         if (self.measures.ground >= 1  and self.measures.ground <= len(self.measures.beacon)) and prev_beacons != ([300] * len(self.measures.beacon)):
             obj_pos[self.measures.ground] = (mapX,mapY)
+            print("self.measures.ground: ",self.measures.ground)
             if mapX % 2 == 1 and mapY % 2 == 1:
                 self.addToMap(mapY,mapX,str(self.measures.ground))
             prev_beacons[self.measures.ground] = 300
@@ -426,7 +427,7 @@ class MyRob(CRobLinkAngs):
         closestIdx = 0
         for i in range(len(positions_to_visit)):
             pos = positions_to_visit[i]
-            if self.drawnMap[pos[1]][pos[0]] != "9":
+            if self.drawnMap[pos[1]][pos[0]] != "O":
                 continue
             path = self.a_star(self.drawnMap,(mapX,mapY),pos)
             # print("testing: ",pos," generated path: ",path)
@@ -453,13 +454,13 @@ class MyRob(CRobLinkAngs):
         decimalX = round(posX*10)%10
         decimalY = round(posY*10)%10
         # compass = self.measures.compass
-        if self.drawnMap[mapY][mapX+1] != "9" and self.drawnMap[mapY][mapX-1] != "9" and self.drawnMap[mapY+1][mapX] !="9" and self.drawnMap[mapY-1][mapX] != "9":
+        if self.drawnMap[mapY][mapX+1] != "O" and self.drawnMap[mapY][mapX-1] != "O" and self.drawnMap[mapY+1][mapX] !="O" and self.drawnMap[mapY-1][mapX] != "O":
             search = True
             inL,inR = 0.0,0.0
             self.driveMotors(inL,inR)
             try:
                 pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                while self.drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "9":
+                while self.drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "O":
                     pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
                 # print("pos_to_reach: ",pos_to_reach, "value: ",self.drawnMap[pos_to_reach[1]][pos_to_reach[0]])
                 path = self.a_star(self.drawnMap,(mapX,mapY),pos_to_reach)
@@ -486,8 +487,8 @@ class MyRob(CRobLinkAngs):
             # else:   # We are at the center of the cell, we may go to the right
 
             if self.measures.irSensor[right_id] < 1.5\
-            and ((abs(self.measures.compass) < 60 and self.drawnMap[mapY+1][mapX] == '9') \
-            or (abs(self.measures.compass)>120 and self.drawnMap[mapY-1][mapX] == '9')):
+            and ((abs(self.measures.compass) < 60 and self.drawnMap[mapY+1][mapX] == 'O') \
+            or (abs(self.measures.compass)>120 and self.drawnMap[mapY-1][mapX] == 'O')):
                 if ((mapX)%2==0 or (mapX%2==1 and (decimalX<=8 and decimalX >=2))) and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
                     # print("Keep going forward")
                     inL,inR = 0.1,0.1
@@ -501,10 +502,10 @@ class MyRob(CRobLinkAngs):
                     toRotate = angleObjective*pi/180 - self.measures.compass*pi/180
             # if there is an open space to the left that we havent visited and we have already visited the front cell, turn left
             elif self.measures.irSensor[left_id] <1.5 \
-                and (((abs(self.measures.compass) < 60 and self.drawnMap[mapY][mapX+1] != '9') \
-                and (abs(self.measures.compass) < 60 and self.drawnMap[mapY-1][mapX] == '9')) \
-                or ((abs(self.measures.compass) > 120 and self.drawnMap[mapY][mapX-1] != '9' ) \
-                and (abs(self.measures.compass)>120 and self.drawnMap[mapY+1][mapX] == '9'))):
+                and (((abs(self.measures.compass) < 60 and self.drawnMap[mapY][mapX+1] != 'O') \
+                and (abs(self.measures.compass) < 60 and self.drawnMap[mapY-1][mapX] == 'O')) \
+                or ((abs(self.measures.compass) > 120 and self.drawnMap[mapY][mapX-1] != 'O' ) \
+                and (abs(self.measures.compass)>120 and self.drawnMap[mapY+1][mapX] == 'O'))):
                 if ((mapX)%2==0 or (mapX%2==1 and (decimalX<=8 and decimalX >=2))) and self.measures.irSensor[center_id]<4.0:   # We are not at the center of the cell, keep moving forward
                     # print("Keep going forward")
                     inL,inR = 0.1,0.1
@@ -539,7 +540,7 @@ class MyRob(CRobLinkAngs):
                 search = True
                 try:
                     pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                    while self.drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "9":
+                    while self.drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "O":
                         pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
                     #     print("checking: ",pos_to_reach, "value: ",self.drawnMap[pos_to_reach[1]][pos_to_reach[0]])
                     # print("pos_to_reach: ",pos_to_reach, "value: ",self.drawnMap[pos_to_reach[1]][pos_to_reach[0]])
@@ -564,8 +565,8 @@ class MyRob(CRobLinkAngs):
             #     self.driveMotors(0.1,0.1)
             # else:
             if self.measures.irSensor[right_id] < 1.5 \
-            and ((self.measures.compass > 0 and self.drawnMap[mapY][mapX+1] == '9') \
-            or (self.measures.compass<0 and self.drawnMap[mapY][mapX-1] == '9')):
+            and ((self.measures.compass > 0 and self.drawnMap[mapY][mapX+1] == 'O') \
+            or (self.measures.compass<0 and self.drawnMap[mapY][mapX-1] == 'O')):
                 if ((mapY)%2 == 0 or (mapY%2==1 and (decimalY<=8 and decimalY >=2))) and self.measures.irSensor[center_id]<4.0:
                     # print("Keep going forward")
                     inL,inR = 0.1,0.1
@@ -578,10 +579,10 @@ class MyRob(CRobLinkAngs):
                     angleObjective = nearest_multiple_of_90(self.measures.compass-90)
                     toRotate = angleObjective*pi/180 - self.measures.compass*pi/180
             elif self.measures.irSensor[left_id] <1.5\
-            and (((self.measures.compass > 0 and self.drawnMap[mapY-1][mapX] != '9') \
-            and (self.measures.compass > 0 and self.drawnMap[mapY][mapX-1] == '9')) \
-            or ((self.measures.compass < 0 and self.drawnMap[mapY+1][mapX] != '9') \
-            and (self.measures.compass < 0 and self.drawnMap[mapY][mapX+1] == '9'))):
+            and (((self.measures.compass > 0 and self.drawnMap[mapY-1][mapX] != 'O') \
+            and (self.measures.compass > 0 and self.drawnMap[mapY][mapX-1] == 'O')) \
+            or ((self.measures.compass < 0 and self.drawnMap[mapY+1][mapX] != 'O') \
+            and (self.measures.compass < 0 and self.drawnMap[mapY][mapX+1] == 'O'))):
                 if ((mapY)%2 == 0 or (decimalY<=8 and decimalY >=2))  and self.measures.irSensor[center_id]<4.0:
                     # print("Keep going forward")
                     inL,inR = 0.1,0.1
@@ -615,7 +616,7 @@ class MyRob(CRobLinkAngs):
                 try:
                     search = True
                     pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
-                    while self.drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "9":
+                    while self.drawnMap[pos_to_reach[1]][pos_to_reach[0]] != "O":
                         pos_to_reach = positions_to_visit.pop(self.getClosestPosIdx(positions_to_visit,mapX,mapY))
                     #     print("checking: ",pos_to_reach, "value: ",self.drawnMap[pos_to_reach[1]][pos_to_reach[0]])
                     # print("pos_to_reach: ",pos_to_reach, "value: ",self.drawnMap[pos_to_reach[1]][pos_to_reach[0]])
@@ -669,7 +670,8 @@ class MyRob(CRobLinkAngs):
                 neighbor = (current[0] + direction[0], current[1] + direction[1])
 
                 # Check bounds and that neighbor is walkable
-                if grid[neighbor[1]][neighbor[0]] == 'X' or grid[neighbor[1]][neighbor[0]] == 'I':
+                # if grid[neighbor[1]][neighbor[0]] == 'X' or grid[neighbor[1]][neighbor[0]] == 'I':
+                if grid[neighbor[1]][neighbor[0]] != ' ' and grid[neighbor[1]][neighbor[0]] != '-' and grid[neighbor[1]][neighbor[0]] != '|':
                 #and 0 <= neighbor[0] < len(grid) and 0 <= neighbor[1] < len(grid[0])  :
                     new_cost = cost_so_far[current] + 1  # Each step costs 1
 
@@ -804,15 +806,15 @@ class MyRob(CRobLinkAngs):
 
     def printDrawnMap(self):
         for i in self.drawnMap:
-            print("".join(i[:55]).replace('9',' '))
-
+            print("".join(i[:55]).replace('O',' '))
+    
     def writeDrawnMap(self):
         mapFile = open(f"{outfile}.map", "w")
         mapFile.write("")
         mapFile.close()
         mapOut = open(f"{outfile}.map", "a")
         for i in self.drawnMap:
-            mapOut.write("".join(i[:55]).replace('9',' '))
+            mapOut.write("".join(i[:55]).replace('O',' '))
             mapOut.write('\n')
         mapOut.close()
 
